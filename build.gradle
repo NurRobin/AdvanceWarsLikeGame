@@ -1,26 +1,48 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 group 'de.nurrobin'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = '17' // Oder '17' wenn ihr Java 17 benutzt
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.openjfx:javafx-controls:17.0.1' // Setzt die Version auf die passende JavaFX Version
-    implementation 'org.openjfx:javafx-fxml:17.0.1' // Entsprechend der verwendeten Java Version
+    implementation 'org.openjfx:javafx-controls:17.0.2'
+    implementation 'org.openjfx:javafx-fxml:17.0.2'
+    implementation 'org.openjfx:javafx-graphics:17.0.2'
+    implementation 'org.openjfx:javafx-base:17.0.2'
+}
+
+javafx {
+    version = "17.0.2"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 application {
-    mainClassName = 'de.nurrobin.Main'
+    mainClass = 'de.nurrobin.Main'
+    applicationDefaultJvmArgs = ["--module-path", "${System.getProperty('java.home')}/lib/javafx-sdk-17.0.2/lib", "--add-modules", "javafx.controls,javafx.fxml"]
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+    options.release.set(17)
 }

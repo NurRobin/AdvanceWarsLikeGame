@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.StackPane?>
-
-<GridPane fx:id="gameGrid" xmlns:fx="http://javafx.com/fxml" fx:controller="de.nurrobin.controller.GameController">
-    <!-- Hier wird die Karte und die Einheiten angezeigt -->
-</GridPane>
