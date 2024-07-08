@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.Button?>
-
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.nurrobin.controller.GameController">
-    <Button text="Click Me!" layoutX="100.0" layoutY="100.0" onAction="#handleButtonClick"/>
-</AnchorPane>

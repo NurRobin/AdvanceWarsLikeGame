@@ -1,8 +1,5 @@
 package de.nurrobin.model;
 
 public enum TerrainType {
-    PLAIN,
-    WOOD,
-    MOUNTAIN,
-    SEA
+    PLAINS, WOODS, MOUNTAINS, SEA, STREET, BRIDGE, HQ, CITY, BASE, AIRPORT, PORT
 }

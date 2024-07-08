@@ -36,14 +36,14 @@ public class GameView {
     private Image getTerrainImage(Terrain terrain) {
         // Beispielhafte Implementierung zur Rückgabe der Terrain-Bilder
         switch (terrain.getType()) {
-            case PLAIN:
-                return new Image("/images/plain.png");
-            case WOOD:
-                return new Image("/images/wood.png");
-            case MOUNTAIN:
-                return new Image("/images/mountain.png");
+            case PLAINS:
+                return new Image("/tiles/plain.png");
+            case WOODS:
+                return new Image("/tiles/wood.png");
+            case MOUNTAINS:
+                return new Image("/tiles/mountain.png");
             case SEA:
-                return new Image("/images/sea.png");
+                return new Image("/tiles/sea.png");
             default:
                 return null;
         }

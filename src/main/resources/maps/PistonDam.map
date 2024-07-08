@@ -35,8 +35,7 @@
                 "ports": 0
             }
         ],
-        "imageFile": "/maps/PistonDam.png",
-        "tilesFile": "/maps/PistonDam.tiles",
-            
+        "imageFile": "src/main/resources/maps/images/PistonDam.png",
+        "tilesFile": "src/main/resources/maps/tiles/PistonDam.tiles",
     }
 }
