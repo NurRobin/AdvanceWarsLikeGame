@@ -1,4 +1,8 @@
 package de.nurrobin.model;
 
-public class TerrainType {
+public enum TerrainType {
+    PLAIN,
+    WOOD,
+    MOUNTAIN,
+    SEA
 }
