@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'de.nurrobin'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = '17' // Oder '17' wenn ihr Java 17 benutzt
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.openjfx:javafx-controls:17.0.1' // Setzt die Version auf die passende JavaFX Version
+    implementation 'org.openjfx:javafx-fxml:17.0.1' // Entsprechend der verwendeten Java Version
+}
+
+application {
+    mainClassName = 'de.nurrobin.Main'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
