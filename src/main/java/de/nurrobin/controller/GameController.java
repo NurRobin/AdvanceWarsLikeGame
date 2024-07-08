@@ -16,7 +16,23 @@ public class GameController {
     }
 
     private void setupGameGrid() {
-        // Initialisiere das Spielfeld basierend auf dem Game-Objekt
-        // Hier wird die GUI-Logik implementiert, um die Karte und Einheiten anzuzeigen
+        gameGrid.getChildren().clear();
+        gameGrid.getColumnConstraints().clear();
+        gameGrid.getRowConstraints().clear();
+
+        for (int i = 0; i < game.getBoard().length; i++) {
+            for (int j = 0; j < game.getBoard()[i].length; j++) {
+                gameGrid.add(game.getBoard()[i][j].getButton(), j, i);
+            }
+        }
+
+        gameGrid.setGridLinesVisible(true);
+
+        gameGrid.setPrefSize(400, 400);
+
+        gameGrid.setHgap(5);
+        gameGrid.setVgap(5);
+
+        gameGrid.setStyle("-fx-background-color: #000000");
     }
 }

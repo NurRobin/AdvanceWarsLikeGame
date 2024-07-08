@@ -1,0 +1,40 @@
+{
+    "mapData": {
+        "players": 2,
+        "size": "19 x 10",
+        "properties": {
+            "HQ": true,
+            "Cities": true,
+            "Bases": true,
+            "Airports": false,
+            "Ports": false
+        },
+        "playersData": [
+            {
+                "playerName": "Neutral",
+                "canPlay": false,
+                "cities": 8,
+                "bases": 0,
+                "airports": 0,
+                "ports": 0
+            },
+            {
+                "playerName": "Orange Star",
+                "canPlay": true,
+                "cities": 0,
+                "bases": 2,
+                "airports": 0,
+                "ports": 0
+            },
+            {
+                "playerName": "Blue Moon",
+                "canPlay": true,
+                "cities": 0,
+                "bases": 2,
+                "airports": 0,
+                "ports": 0
+            }
+        ],
+        "imageFile": "/maps/LittleIsland.png",
+    }
+}

@@ -1,0 +1,40 @@
+{
+    "mapData": {
+        "players": 2,
+        "size": "19 x 17",
+        "properties": {
+            "HQ": true,
+            "Cities": true,
+            "Bases": true,
+            "Airports": true,
+            "Ports": false
+        },
+        "playersData": [
+            {
+                "playerName": "Neutral",
+                "canPlay": false,
+                "cities": 6,
+                "bases": 0,
+                "airports": 0,
+                "ports": 0
+            },
+            {
+                "playerName": "Orange Star",
+                "canPlay": true,
+                "cities": 5,
+                "bases": 4,
+                "airports": 3,
+                "ports": 0
+            },
+            {
+                "playerName": "Blue Moon",
+                "canPlay": true,
+                "cities": 5,
+                "bases": 4,
+                "airports": 3,
+                "ports": 0
+            }
+        ],
+        "imageFile": "/maps/EonSprings.png",
+    }
+}

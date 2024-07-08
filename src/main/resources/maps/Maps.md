@@ -1,0 +1,38 @@
+.map Files are JSON like files that contain the information about the map its representing. A .map file is made up of the following fields:
+
+- **mapData**: The root object that contains all the information about the map.
+  - **players**: Indicates the number of players that can play on this map.
+  - **size**: Specifies the dimensions of the map.
+  - **properties**: Lists the features available on the map.
+    - **HQ**: Indicates whether Headquarters are present.
+    - **Cities**: Indicates the presence of cities.
+    - **Bases**: Shows if there are bases on the map.
+    - **Airports**: Shows if there are airports available for use.
+    - **Ports**: Shows if there are ports available for use.
+  - **playersData**: An array containing data for each player or faction on the map.
+    - The first object represents a "Neutral" player or faction.
+    - The second object represents the "Orange Star" player or faction.
+    - The third object represents the "Blue Moon" player or faction.
+  - **imageFile**: Provides the path to the image file of the map, located at "/maps/MAPNAME.png".
+  - **tiles**: A 2D array that represents the map grid. Each number corresponds to a specific tile type.
+    - 0: Plains
+    - 1: Woods
+    - 2: Mountains
+    - 3: Sea
+    - 4: Street
+    - 5: Bridge
+    - 6: HQ Neutral
+    - 7: HQ Orange Star
+    - 8: HQ Blue Moon
+    - 9: City Neutral
+    - A: City Orange Star
+    - B: City Blue Moon
+    - C: Base Neutral
+    - D: Base Orange Star
+    - E: Base Blue Moon
+    - F: Airport Neutral
+    - G: Airport Orange Star
+    - H: Airport Blue Moon
+    - I: Port Neutral
+    - J: Port Orange Star
+    - K: Port Blue Moon

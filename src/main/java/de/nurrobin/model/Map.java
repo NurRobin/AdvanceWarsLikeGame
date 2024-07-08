@@ -1,31 +1,64 @@
 package de.nurrobin.model;
 
-public class Map {
-    private Terrain[][] mapGrid;
+import de.nurrobin.interfaces.MapData;
 
-    public Map() {
-        // Beispiel: Initialisiere eine einfache Karte
-        mapGrid = new Terrain[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                mapGrid[i][j] = new Terrain(TerrainType.PLAIN);
-            }
-        }
+public class Map implements MapData {
+    private int playerCount;
+    private String mapSize;
+    private String imageFile;
+
+    public Map(int playerCount, String mapSize) {
+        this.playerCount = playerCount;
+        this.mapSize = mapSize;
     }
 
-    public Terrain getTerrain(int x, int y) {
-        return mapGrid[x][y];
+    @Override
+    public void loadMapData(String mapData) {
+        
     }
 
-    public void setTerrain(int x, int y, Terrain terrain) {
-        mapGrid[x][y] = terrain;
+    @Override
+    public int getPlayerCount() {
+        return playerCount;
     }
 
-    public int getWidth() {
-        return mapGrid.length;
+    @Override
+    public String getMapSize() {
+        return mapSize;
     }
 
-    public int getHeight() {
-        return mapGrid[0].length;
+    @Override
+    public boolean hasProperty(String property) {
+        // Implement this method
+        return false;
+    }
+
+    @Override
+    public int getPlayerCities(String playerName) {
+        // Implement this method
+        return 0;
+    }
+
+    @Override
+    public int getPlayerBases(String playerName) {
+        // Implement this method
+        return 0;
+    }
+
+    @Override
+    public int getPlayerAirports(String playerName) {
+        // Implement this method
+        return 0;
+    }
+
+    @Override
+    public int getPlayerPorts(String playerName) {
+        // Implement this method
+        return 0;
+    }
+
+    @Override
+    public String getImageFile() {
+        return imageFile;
     }
 }

@@ -1,0 +1,42 @@
+{
+    "mapData": {
+        "players": 2,
+        "size": "26 x 14",
+        "properties": {
+            "HQ": true,
+            "Cities": true,
+            "Bases": true,
+            "Airports": true,
+            "Ports": false
+        },
+        "playersData": [
+            {
+                "playerName": "Neutral",
+                "canPlay": false,
+                "cities": 12,
+                "bases": 0,
+                "airports": 2,
+                "ports": 0
+            },
+            {
+                "playerName": "Orange Star",
+                "canPlay": true,
+                "cities": 4,
+                "bases": 2,
+                "airports": 3,
+                "ports": 0
+            },
+            {
+                "playerName": "Blue Moon",
+                "canPlay": true,
+                "cities": 4,
+                "bases": 2,
+                "airports": 3,
+                "ports": 0
+            }
+        ],
+        "imageFile": "/maps/PistonDam.png",
+        "tilesFile": "/maps/PistonDam.tiles",
+            
+    }
+}
