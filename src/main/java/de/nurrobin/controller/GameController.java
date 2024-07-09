@@ -2,6 +2,7 @@ package de.nurrobin.controller;
 
 import de.nurrobin.model.Game;
 import de.nurrobin.model.Map;
+import de.nurrobin.util.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import javafx.scene.image.Image;
@@ -9,12 +10,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
 public class GameController {
+
+    private final Logger logger = new Logger(GameController.class);
+    private final Random random = new Random();
 
     @FXML
     private Pane gameBoard;
@@ -22,26 +26,25 @@ public class GameController {
     private Game game;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws FileNotFoundException {
         final String randomMapName = getRandomMapName();
+        logger.logInfo("Loading map: " + randomMapName);
         try {
             game = new Game(new Map(randomMapName));
             renderGameBoard();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.logException(e);
         }
     }
 
-    private String getRandomMapName() {
-        // Return a random map name from the maps directory that ends with .map
-        File mapsDirectory = new File(getClass().getResource("/maps").getFile());
+    private String getRandomMapName() throws FileNotFoundException {
+        File mapsDirectory = new File(Objects.requireNonNull(getClass().getResource("/maps")).getFile());
         File[] mapFiles = mapsDirectory.listFiles((dir, name) -> name.endsWith(".map"));
         if (mapFiles != null && mapFiles.length > 0) {
-            Random random = new Random();
             int randomIndex = random.nextInt(mapFiles.length);
             return mapFiles[randomIndex].getName();
         } else {
-            throw new RuntimeException("No map files found in the maps directory");
+            throw new FileNotFoundException("No map files found in the maps directory");
         }
     }
 
@@ -84,15 +87,17 @@ public class GameController {
         // Switch statement to return the correct image based on the tile and layer
         switch (layer) {
             case 0:
-                if (tile != 3) {
+                if (tile != 3 && tile != 5) {
                     return new Image("/tiles/textures/plain.png");
                 } else {
                     return new Image("/tiles/textures/sea.png");
                 }
             case 1:
                 return switch (tile) {
+                    case 0 -> new Image("/tiles/textures/plain.png");
                     case 1 -> new Image("/tiles/textures/wood.png");
                     case 2 -> new Image("/tiles/textures/mountain.png");
+                    case 3 -> new Image("/tiles/textures/sea.png");
                     case 4, 5 -> new Image("/tiles/textures/road.png");
                     case 7 -> new Image("/buildings/textures/HQ-Orange.png");
                     case 8 -> new Image("/buildings/textures/HQ-Blue.png");

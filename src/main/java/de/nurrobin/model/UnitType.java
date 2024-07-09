@@ -2,11 +2,21 @@ package de.nurrobin.model;
 
 public enum UnitType {
     INFANTRY,
-    MECHANIZED_INFANTRY,
+    MECH_INFANTRY,
+    RECON,
     TANK,
-    MOBILE_ARTILLERY,
+    MEDIUM_TANK,
+    APC,
+    ARTILLERY,
+    ROCKETS,
     ANTI_AIR,
+    MISSILES,
     FIGHTER,
     BOMBER,
-    BATTLE_COPTER
+    BATTLE_COPTER,
+    TRANSPORT_COPTER,
+    BATTLESHIP,
+    CRUISER,
+    SUBMARINE,
+    LANDER
 }

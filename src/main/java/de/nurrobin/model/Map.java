@@ -18,7 +18,6 @@ public class Map {
     private boolean airports;
     private boolean ports;
     private String imageFile;
-    private String tilesFilePath;
     private int[][] tiles;
 
     public Map(String mapFileName) throws IOException {
@@ -43,9 +42,9 @@ private void loadMap(String mapFileName) throws IOException {
         this.ports = StringUtils.extractBooleanValue(content, "\"Ports\": (true|false)");
         
         this.imageFile = StringUtils.extractStringValue(content, "\"imageFile\": \"([^\"]+)\",");
-        this.tilesFilePath = StringUtils.extractStringValue(content, "\"tilesFile\": \"([^\"]+)\"");
+        String tilesFilePath = StringUtils.extractStringValue(content, "\"tilesFile\": \"([^\"]+)\"");
         
-        loadTiles(this.tilesFilePath);
+        loadTiles(tilesFilePath);
     } catch (Exception e) {
         throw new IOException("Failed to parse map file: " + mapFileName, e);
     }
@@ -75,30 +74,30 @@ private void loadMap(String mapFileName) throws IOException {
     }
 
     private int parseTileValue(String tileValue) {
-        switch (tileValue) {
-            case "0": return 0; // Plains
-            case "1": return 1; // Woods
-            case "2": return 2; // Mountains
-            case "3": return 3; // Sea
-            case "4": return 4; // Street
-            case "5": return 5; // Bridge
-            case "6": return 6; // HQ Neutral
-            case "7": return 7; // HQ Orange Star
-            case "8": return 8; // HQ Blue Moon
-            case "9": return 9; // City Neutral
-            case "A": return 10; // City Orange Star
-            case "B": return 11; // City Blue Moon
-            case "C": return 12; // Base Neutral
-            case "D": return 13; // Base Orange Star
-            case "E": return 14; // Base Blue Moon
-            case "F": return 15; // Airport Neutral
-            case "G": return 16; // Airport Orange Star
-            case "H": return 17; // Airport Blue Moon
-            case "I": return 18; // Port Neutral
-            case "J": return 19; // Port Orange Star
-            case "K": return 20; // Port Blue Moon
-            default: throw new IllegalArgumentException("Unknown tile value: " + tileValue);
-        }
+        return switch (tileValue) {
+            case "0" -> 0; // Plains
+            case "1" -> 1; // Woods
+            case "2" -> 2; // Mountains
+            case "3" -> 3; // Sea
+            case "4" -> 4; // Street
+            case "5" -> 5; // Bridge
+            case "6" -> 6; // HQ Neutral
+            case "7" -> 7; // HQ Orange Star
+            case "8" -> 8; // HQ Blue Moon
+            case "9" -> 9; // City Neutral
+            case "A" -> 10; // City Orange Star
+            case "B" -> 11; // City Blue Moon
+            case "C" -> 12; // Base Neutral
+            case "D" -> 13; // Base Orange Star
+            case "E" -> 14; // Base Blue Moon
+            case "F" -> 15; // Airport Neutral
+            case "G" -> 16; // Airport Orange Star
+            case "H" -> 17; // Airport Blue Moon
+            case "I" -> 18; // Port Neutral
+            case "J" -> 19; // Port Orange Star
+            case "K" -> 20; // Port Blue Moon
+            default -> throw new IllegalArgumentException("Unknown tile value: " + tileValue);
+        };
     }
 
     public int getPlayers() {
@@ -142,7 +141,20 @@ private void loadMap(String mapFileName) throws IOException {
     }
 
     public Terrain getTerrain(int i, int j) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTerrain'");
+        // Return the terrain at position i, j by getting the tile value from the tiles array and creating a new Terrain object with the correct TerrainType
+        int tileValue = tiles[i][j];
+        return switch (tileValue) {
+            case 0 -> new Terrain(TerrainType.PLAINS);
+            case 1 -> new Terrain(TerrainType.WOODS);
+            case 2 -> new Terrain(TerrainType.MOUNTAINS);
+            case 3 -> new Terrain(TerrainType.SEA);
+            case 4, 5 -> new Terrain(TerrainType.STREET);
+            case 6, 8, 7 -> new Terrain(TerrainType.HQ);
+            case 9, 11, 10 -> new Terrain(TerrainType.CITY);
+            case 12, 14, 13 -> new Terrain(TerrainType.BASE);
+            case 15, 17, 16 -> new Terrain(TerrainType.AIRPORT);
+            case 18, 20, 19 -> new Terrain(TerrainType.PORT);
+            default -> throw new IllegalArgumentException("Unknown tile value: " + tileValue);
+        };
     }
 }

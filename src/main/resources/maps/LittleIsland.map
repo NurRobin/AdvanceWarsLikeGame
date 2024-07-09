@@ -36,6 +36,7 @@
             }
         ],
         "imageFile": "src/main/resources/maps/images/LittleIsland.png",
-        "tileFile": "src/main/resources/maps/tiles/LittleIsland.tiles"
+        "tileFile": "src/main/resources/maps/tiles/LittleIsland.tiles",
+        "unitFile": "src/main/resources/maps/units/LittleIsland.units"
     }
 }

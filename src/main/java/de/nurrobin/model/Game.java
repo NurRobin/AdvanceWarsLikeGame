@@ -13,7 +13,8 @@ public class Game {
     }
 
     private void initializeUnits() {
-        // Initialize units for both players at predefined positions
+        //TODO: Initialize units for both players at predefined positions
+
     }
 
     public Map getMap() {
