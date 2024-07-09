@@ -58,7 +58,7 @@ public class GameController {
 
                 int tile = map.getTiles()[i][j];
 
-                // Layer 0: Background layer
+                // Layer 0: Background layer -> only plains or sea tiles
                 ImageView background = new ImageView(getTileImage(tile, 0));
                 background.setFitWidth(tileSize);
                 background.setFitHeight(tileSize);
@@ -70,11 +70,8 @@ public class GameController {
                 object.setFitHeight(tileSize);
                 tileStack.getChildren().add(object);
 
-                // Layer 2: Interactive layer
-                ImageView interactive = new ImageView(getTileImage(tile, 2));
-                interactive.setFitWidth(tileSize);
-                interactive.setFitHeight(tileSize);
-                tileStack.getChildren().add(interactive);
+                // Layer 2: Interactive layer -> units
+                //TODO: Add logic to render units on the interactive layer
 
                 tileStack.setLayoutX(j * tileSize);
                 tileStack.setLayoutY(i * tileSize);
@@ -84,12 +81,51 @@ public class GameController {
     }
 
     private Image getTileImage(int tile, int layer) {
-        String imagePath = "/tiles/" + layer + "/" + tile + ".png";
-        try {
-            return new Image(new FileInputStream(imagePath));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
+        // Switch statement to return the correct image based on the tile and layer
+        switch (layer) {
+            case 0:
+                if (tile != 3) {
+                    return new Image("/tiles/textures/plain.png");
+                } else {
+                    return new Image("/tiles/textures/sea.png");
+                }
+            case 1:
+                return switch (tile) {
+                    case 1 -> new Image("/tiles/textures/wood.png");
+                    case 2 -> new Image("/tiles/textures/mountain.png");
+                    case 4, 5 -> new Image("/tiles/textures/road.png");
+                    case 7 -> new Image("/buildings/textures/HQ-Orange.png");
+                    case 8 -> new Image("/buildings/textures/HQ-Blue.png");
+                    case 9 -> new Image("/buildings/textures/City-Neutral.png");
+                    case 10 ->
+                        //TODO: Return the correct image for City Orange Star
+                            new Image("/buildings/textures/City-Neutral.png");
+                    case 11 ->
+                        //TODO: Return the correct image for City Blue Moon
+                            new Image("/buildings/textures/City-Neutral.png");
+                    case 12 -> new Image("/buildings/textures/Base-Neutral.png");
+                    case 13 -> new Image("/buildings/textures/Base-Orange.png");
+                    case 14 -> new Image("/buildings/textures/Base-Blue.png");
+                    case 15 -> new Image("/buildings/textures/Airport-Neutral.png");
+                    case 16 ->
+                        //TODO: Return the correct image for Airport Orange Star when we have the texture for Airport Blue
+                            new Image("/buildings/textures/Airport-Neutral.png");
+                    //return new Image("/buildings/textures/Airport-Orange.png");
+                    case 17 ->
+                        //TODO: Return the correct image for Airport Blue Moon
+                            new Image("/buildings/textures/Airport-Neutral.png");
+                    //return new Image("/buildings/textures/Airport-Blue.png");
+                    case 18 -> new Image("/buildings/textures/Port-Neutral.png");
+                    case 19 ->
+                        //TODO: Return the correct image for Port Orange Star
+                            new Image("/buildings/textures/Port-Neutral.png");
+                    case 20 ->
+                        //TODO: Return the correct image for Port Blue Moon
+                            new Image("/buildings/textures/Port-Neutral.png");
+                    default -> throw new IllegalStateException("Unexpected tile value: " + tile);
+                };
+            default:
+                throw new IllegalArgumentException("Unknown or unsopported layer: " + layer);
         }
     }
 }
