@@ -19,6 +19,7 @@ public class Map {
     private boolean ports;
     private String imageFile;
     private int[][] tiles;
+    private int[][] units;
 
     public Map(String mapFileName) throws IOException {
         // Load map data from file in resources/maps/mapFileName.map
@@ -27,7 +28,7 @@ public class Map {
     }
 
 private void loadMap(String mapFileName) throws IOException {
-    String content = new String(Files.readAllBytes(Paths.get(mapFileName)), StandardCharsets.UTF_8);
+    String content = Files.readString(Paths.get(mapFileName));
     
     try {
         this.players = StringUtils.extractIntValue(content, "\"players\": (\\d+),");
@@ -43,8 +44,10 @@ private void loadMap(String mapFileName) throws IOException {
         
         this.imageFile = StringUtils.extractStringValue(content, "\"imageFile\": \"([^\"]+)\",");
         String tilesFilePath = StringUtils.extractStringValue(content, "\"tilesFile\": \"([^\"]+)\"");
+        String unitsFilePath = StringUtils.extractStringValue(content, "\"unitsFile\": \"([^\"]+)\"");
         
         loadTiles(tilesFilePath);
+        loadUnits(unitsFilePath);
     } catch (Exception e) {
         throw new IOException("Failed to parse map file: " + mapFileName, e);
     }
@@ -71,6 +74,72 @@ private void loadMap(String mapFileName) throws IOException {
                 }
             }
         }
+    }
+
+    private void loadUnits(String unitsFilePath) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(unitsFilePath))) {
+            String line;
+            int rows = 0;
+            while ((line = br.readLine()) != null) {
+                rows++;
+            }
+            this.units = new int[rows][];
+
+            try (BufferedReader br2 = new BufferedReader(new FileReader(unitsFilePath))) {
+                int i = 0;
+                while ((line = br2.readLine()) != null) {
+                    String[] unitValues = line.split(" ");
+                    this.units[i] = new int[unitValues.length];
+                    for (int j = 0; j < unitValues.length; j++) {
+                        this.units[i][j] = parseUnitValue(unitValues[j]);
+                    }
+                    i++;
+                }
+            }
+        }
+    }
+
+    private int parseUnitValue(String unitValue) {
+        return switch (unitValue) {
+            case "0" -> 0; // Orange Infantry
+            case "1" -> 1; // Orange Mech Infantry
+            case "2" -> 2; // Orange Recon
+            case "3" -> 3; // Orange Tank
+            case "4" -> 4; // Orange Medium Tank
+            case "5" -> 5; // Orange APC
+            case "6" -> 6; // Orange Artillery
+            case "7" -> 7; // Orange Rockets
+            case "8" -> 8; // Orange Anti-Air
+            case "9" -> 9; // Orange Missiles
+            case "A" -> 10; // Orange Fighter
+            case "B" -> 11; // Orange Bomber
+            case "C" -> 12; // Orange Battle Copter
+            case "D" -> 13; // Orange Transport Copter
+            case "E" -> 14; // Orange Battleship
+            case "F" -> 15; // Orange Cruiser
+            case "G" -> 16; // Orange Lander
+            case "H" -> 17; // Orange Submarine
+            case "I" -> 18; // Blue Infantry
+            case "J" -> 19; // Blue Mech Infantry
+            case "K" -> 20; // Blue Recon
+            case "L" -> 21; // Blue Tank
+            case "M" -> 22; // Blue Medium Tank
+            case "N" -> 23; // Blue APC
+            case "O" -> 24; // Blue Artillery
+            case "P" -> 25; // Blue Rockets
+            case "Q" -> 26; // Blue Anti-Air
+            case "R" -> 27; // Blue Missiles
+            case "S" -> 28; // Blue Fighter
+            case "T" -> 29; // Blue Bomber
+            case "U" -> 30; // Blue Battle Copter
+            case "V" -> 31; // Blue Transport Copter
+            case "W" -> 32; // Blue Battleship
+            case "X" -> 33; // Blue Cruiser
+            case "Y" -> 34; // Blue Lander
+            case "Z" -> 35; // Blue Submarine
+            case "x" -> 36; // No unit
+            default -> throw new IllegalArgumentException("Unknown unit value: " + unitValue);
+        };
     }
 
     private int parseTileValue(String tileValue) {
@@ -136,25 +205,15 @@ private void loadMap(String mapFileName) throws IOException {
         return imageFile;
     }
 
-    public int[][] getTiles() {
-        return tiles;
+    public Tile getTileAt(int i, int j) {
+        // Return a new Tile object with the correct background and object images based on the terrain at position i, j
+        int tileValue = tiles[i][j];
+        return new Tile(tileValue);
     }
 
-    public Terrain getTerrain(int i, int j) {
-        // Return the terrain at position i, j by getting the tile value from the tiles array and creating a new Terrain object with the correct TerrainType
-        int tileValue = tiles[i][j];
-        return switch (tileValue) {
-            case 0 -> new Terrain(TerrainType.PLAINS);
-            case 1 -> new Terrain(TerrainType.WOODS);
-            case 2 -> new Terrain(TerrainType.MOUNTAINS);
-            case 3 -> new Terrain(TerrainType.SEA);
-            case 4, 5 -> new Terrain(TerrainType.STREET);
-            case 6, 8, 7 -> new Terrain(TerrainType.HQ);
-            case 9, 11, 10 -> new Terrain(TerrainType.CITY);
-            case 12, 14, 13 -> new Terrain(TerrainType.BASE);
-            case 15, 17, 16 -> new Terrain(TerrainType.AIRPORT);
-            case 18, 20, 19 -> new Terrain(TerrainType.PORT);
-            default -> throw new IllegalArgumentException("Unknown tile value: " + tileValue);
-        };
+    public Unit getUnitAt(int i, int j) {
+        // Return a new Unit object with the correct image based on the unit at position i, j
+        int unitValue = units[i][j];
+        return new Unit(unitValue);
     }
 }

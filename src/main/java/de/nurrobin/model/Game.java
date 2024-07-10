@@ -31,6 +31,6 @@ public class Game {
 
     public Unit[] getUnits() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUnits'");
+        throw new UnsupportedOperationException("Unimplemented method 'getUnitAt'");
     }
 }

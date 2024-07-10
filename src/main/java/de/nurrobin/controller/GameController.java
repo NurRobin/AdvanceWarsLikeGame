@@ -2,6 +2,8 @@ package de.nurrobin.controller;
 
 import de.nurrobin.model.Game;
 import de.nurrobin.model.Map;
+import de.nurrobin.model.Tile;
+import de.nurrobin.model.Unit;
 import de.nurrobin.util.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
@@ -59,22 +61,30 @@ public class GameController {
                 StackPane tileStack = new StackPane();
                 tileStack.setPrefSize(tileSize, tileSize);
 
-                int tile = map.getTiles()[i][j];
+                Tile tile = map.getTileAt(i, j);
+                Unit unit = map.getUnitAt(i, j);
 
                 // Layer 0: Background layer -> only plains or sea tiles
-                ImageView background = new ImageView(getTileImage(tile, 0));
+                ImageView background = new ImageView(tile.getBackgroundImage());
                 background.setFitWidth(tileSize);
                 background.setFitHeight(tileSize);
                 tileStack.getChildren().add(background);
 
                 // Layer 1: Object layer
-                ImageView object = new ImageView(getTileImage(tile, 1));
-                object.setFitWidth(tileSize);
-                object.setFitHeight(tileSize);
-                tileStack.getChildren().add(object);
+                if (tile.hasObject()) {
+                    ImageView object = new ImageView(tile.getObjectImage());
+                    object.setFitWidth(tileSize);
+                    object.setFitHeight(tileSize);
+                    tileStack.getChildren().add(object);
+                }
 
                 // Layer 2: Interactive layer -> units
-                //TODO: Add logic to render units on the interactive layer
+                if (unit != null) {
+                    ImageView unitImage = new ImageView(unit.getImage());
+                    unitImage.setFitWidth(tileSize);
+                    unitImage.setFitHeight(tileSize);
+                    tileStack.getChildren().add(unitImage);
+                }
 
                 tileStack.setLayoutX(j * tileSize);
                 tileStack.setLayoutY(i * tileSize);
