@@ -2,14 +2,15 @@ package de.nurrobin.model;
 
 import de.nurrobin.util.Logger;
 import de.nurrobin.util.StringUtils;
+import java.util.Map;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Map {
-    private final Logger logger = new Logger(Map.class);
+public class GameMap {
+    private final Logger logger = new Logger(GameMap.class);
 
     private int players;
     private int width;
@@ -23,7 +24,7 @@ public class Map {
     private int[][] tiles;
     private int[][] units;
 
-    public Map(String mapFileName) throws IOException {
+    public GameMap(String mapFileName) throws IOException {
         // Load map data from file in resources/maps/mapFileName.map
         String mapFilePath = "src/main/resources/maps/" + mapFileName;
         loadMap(mapFilePath);
@@ -103,75 +104,41 @@ private void loadMap(String mapFileName) throws IOException {
         }
     }
 
+    private static final Map<String, Integer> UNIT_MAP = Map.ofEntries(
+        Map.entry("0", 0), Map.entry("1", 1), Map.entry("2", 2), Map.entry("3", 3), Map.entry("4", 4),
+        Map.entry("5", 5), Map.entry("6", 6), Map.entry("7", 7), Map.entry("8", 8), Map.entry("9", 9),
+        Map.entry("A", 10), Map.entry("B", 11), Map.entry("C", 12), Map.entry("D", 13), Map.entry("E", 14),
+        Map.entry("F", 15), Map.entry("G", 16), Map.entry("H", 17), Map.entry("I", 18), Map.entry("J", 19),
+        Map.entry("K", 20), Map.entry("L", 21), Map.entry("M", 22), Map.entry("N", 23), Map.entry("O", 24),
+        Map.entry("P", 25), Map.entry("Q", 26), Map.entry("R", 27), Map.entry("S", 28), Map.entry("T", 29),
+        Map.entry("U", 30), Map.entry("V", 31), Map.entry("W", 32), Map.entry("X", 33), Map.entry("Y", 34),
+        Map.entry("Z", 35), Map.entry("x", 36)
+    );
+    
+    private static final Map<String, Integer> TILE_MAP = Map.ofEntries(
+        Map.entry("0", 0), Map.entry("1", 1), Map.entry("2", 2), Map.entry("3", 3), Map.entry("4", 4),
+        Map.entry("5", 5), Map.entry("6", 6), Map.entry("7", 7), Map.entry("8", 8), Map.entry("9", 9),
+        Map.entry("A", 10), Map.entry("B", 11), Map.entry("C", 12), Map.entry("D", 13), Map.entry("E", 14),
+        Map.entry("F", 15), Map.entry("G", 16), Map.entry("H", 17), Map.entry("I", 18), Map.entry("J", 19),
+        Map.entry("K", 20)
+    );
+
     private int parseUnitValue(String unitValue) {
-        return switch (unitValue) {
-            case "0" -> 0; // Orange Infantry
-            case "1" -> 1; // Orange Mech Infantry
-            case "2" -> 2; // Orange Recon
-            case "3" -> 3; // Orange Tank
-            case "4" -> 4; // Orange Medium Tank
-            case "5" -> 5; // Orange APC
-            case "6" -> 6; // Orange Artillery
-            case "7" -> 7; // Orange Rockets
-            case "8" -> 8; // Orange Anti-Air
-            case "9" -> 9; // Orange Missiles
-            case "A" -> 10; // Orange Fighter
-            case "B" -> 11; // Orange Bomber
-            case "C" -> 12; // Orange Battle Copter
-            case "D" -> 13; // Orange Transport Copter
-            case "E" -> 14; // Orange Battleship
-            case "F" -> 15; // Orange Cruiser
-            case "G" -> 16; // Orange Lander
-            case "H" -> 17; // Orange Submarine
-            case "I" -> 18; // Blue Infantry
-            case "J" -> 19; // Blue Mech Infantry
-            case "K" -> 20; // Blue Recon
-            case "L" -> 21; // Blue Tank
-            case "M" -> 22; // Blue Medium Tank
-            case "N" -> 23; // Blue APC
-            case "O" -> 24; // Blue Artillery
-            case "P" -> 25; // Blue Rockets
-            case "Q" -> 26; // Blue Anti-Air
-            case "R" -> 27; // Blue Missiles
-            case "S" -> 28; // Blue Fighter
-            case "T" -> 29; // Blue Bomber
-            case "U" -> 30; // Blue Battle Copter
-            case "V" -> 31; // Blue Transport Copter
-            case "W" -> 32; // Blue Battleship
-            case "X" -> 33; // Blue Cruiser
-            case "Y" -> 34; // Blue Lander
-            case "Z" -> 35; // Blue Submarine
-            case "x" -> 36; // No unit
-            default -> throw new IllegalArgumentException("Unknown unit value: " + unitValue);
-        };
+        Integer value = UNIT_MAP.get(unitValue);
+        if (value == null) {
+            throw new IllegalArgumentException("Unknown unit value: " + unitValue);
+        }
+        return value;
     }
 
     private int parseTileValue(String tileValue) {
-        return switch (tileValue) {
-            case "0" -> 0; // Plains
-            case "1" -> 1; // Woods
-            case "2" -> 2; // Mountains
-            case "3" -> 3; // Sea
-            case "4" -> 4; // Street
-            case "5" -> 5; // Bridge
-            case "6" -> 6; // HQ Neutral
-            case "7" -> 7; // HQ Orange Star
-            case "8" -> 8; // HQ Blue Moon
-            case "9" -> 9; // City Neutral
-            case "A" -> 10; // City Orange Star
-            case "B" -> 11; // City Blue Moon
-            case "C" -> 12; // Base Neutral
-            case "D" -> 13; // Base Orange Star
-            case "E" -> 14; // Base Blue Moon
-            case "F" -> 15; // Airport Neutral
-            case "G" -> 16; // Airport Orange Star
-            case "H" -> 17; // Airport Blue Moon
-            case "I" -> 18; // Port Neutral
-            case "J" -> 19; // Port Orange Star
-            case "K" -> 20; // Port Blue Moon
-            default -> throw new IllegalArgumentException("Unknown tile value: " + tileValue);
-        };
+        Integer value = TILE_MAP.get(tileValue);
+        if (value == null) {
+            throw new IllegalArgumentException("Unknown tile value: " + tileValue);
+        }
+        return value;
     }
+    
 
     public int getPlayers() {
         return players;

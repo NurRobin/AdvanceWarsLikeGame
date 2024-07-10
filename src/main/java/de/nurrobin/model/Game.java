@@ -3,11 +3,11 @@ package de.nurrobin.model;
 import java.util.List;
 
 public class Game {
-    private Map map;
+    private GameMap map;
     private List<Unit> player1Units;
     private List<Unit> player2Units;
 
-    public Game(Map map) {
+    public Game(GameMap map) {
         this.map = map;
         initializeUnits();
     }
@@ -17,7 +17,7 @@ public class Game {
 
     }
 
-    public Map getMap() {
+    public GameMap getMap() {
         return map;
     }
 

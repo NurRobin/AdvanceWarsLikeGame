@@ -14,9 +14,10 @@ public class Main extends Application {
         logger.logDebug("Loading FXML file...");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"));
         Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
         logger.logDebug("Starting application...");
+        primaryStage.setScene(scene);
         primaryStage.setTitle("Advance Wars-like Game");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

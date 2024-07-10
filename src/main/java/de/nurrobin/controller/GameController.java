@@ -1,7 +1,7 @@
 package de.nurrobin.controller;
 
 import de.nurrobin.model.Game;
-import de.nurrobin.model.Map;
+import de.nurrobin.model.GameMap;
 import de.nurrobin.model.Tile;
 import de.nurrobin.model.Unit;
 import de.nurrobin.util.Logger;
@@ -13,6 +13,8 @@ import javafx.scene.layout.StackPane;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -25,6 +27,8 @@ public class GameController {
     private int objectCount;
     private int unitCount;
 
+    private Unit selectedUnit;
+
     @FXML
     private Pane gameBoard;
 
@@ -35,7 +39,7 @@ public class GameController {
         final String randomMapName = getRandomMapName();
         logger.logInfo("Loading map: " + randomMapName);
         try {
-            game = new Game(new Map(randomMapName));
+            game = new Game(new GameMap(randomMapName));
             renderGameBoard();
         } catch (IOException e) {
             logger.logException(e);
@@ -54,7 +58,7 @@ public class GameController {
     }
 
     private void renderGameBoard() {
-        Map map = game.getMap();
+        GameMap map = game.getMap();
         int tileSize = 32;
         int width = map.getWidth();
         int height = map.getHeight();
@@ -63,7 +67,7 @@ public class GameController {
         logger.logDebug("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
     }
 
-    private void renderLoop(int height, int width, int tileSize, Map map) {
+    private void renderLoop(int height, int width, int tileSize, GameMap map) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 StackPane tileStack = new StackPane();
@@ -78,7 +82,10 @@ public class GameController {
                 // Layer 1: Object layer
                 renderObjectLayer(tile, tileSize, tileStack);
 
-                // Layer 2: Interactive layer -> units
+                // Layer 2: Movement layer -> pathfinding
+                readyMovementLayer(tile, tileSize, tileStack);
+
+                // Layer 3: Interactive layer -> units
                 renderSpriteLayer(unit, tileSize, tileStack);
 
                 tileStack.setLayoutX(j * tileSize);
@@ -86,6 +93,11 @@ public class GameController {
                 gameBoard.getChildren().add(tileStack);
             }
         }
+    }
+
+    private void readyMovementLayer(Tile tile, int tileSize, StackPane tileStack) {
+        // This Layer is meant for semi-transparent tiles to show where the player can move a clicked unit but until then it's an empty layer
+        
     }
 
     private void renderBackgroundLayer(Tile tile, int tileSize, StackPane tileStack) {
@@ -107,13 +119,36 @@ public class GameController {
     }
 
     private void renderSpriteLayer(Unit unit, int tileSize, StackPane tileStack) {
-        if (unit.getUnitID() != 36) {
+        if (unit.getUnitCode() != 36) {
             ImageView unitImage = new ImageView(unit.getImage());
             unitCount++;
             unitImage.setFitWidth(tileSize);
             unitImage.setFitHeight(tileSize);
             tileStack.getChildren().add(unitImage);
+            // Event-Handler für das Klicken auf Einheiten
+            unitImage.setOnMouseClicked(event -> onUnitClicked(unit));
         }
     }
 
+    private void onUnitClicked(Unit unit) {
+        logger.logDebug("Unit clicked: " + unit.getUnitID());
+        selectedUnit = unit;
+        visualizeMovementOptions();
+    }
+
+    private void visualizeMovementOptions() {
+        if (selectedUnit != null) {
+            // Calculate reachable tiles based on the unit's position and movement ability
+            List<Tile> reachableTiles = calculateReachableTiles(selectedUnit);
+            for (Tile tile : reachableTiles) {
+                //TODO: Implement logic to visualize reachable tiles
+            }
+        }
+    }
+
+    private List<Tile> calculateReachableTiles(Unit unit) {
+        // Implement logic to calculate reachable tiles based on the unit's position and movement radius
+        // This is a placeholder implementation
+        return new ArrayList<>();
+    }
 }

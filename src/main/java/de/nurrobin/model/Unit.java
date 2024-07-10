@@ -1,19 +1,22 @@
 package de.nurrobin.model;
 
 import de.nurrobin.enums.UnitType;
+import de.nurrobin.persistor.UnitPersistor;
 import javafx.scene.image.Image;
 
 public class Unit {
-    private final int unitID;
+    private final int unitCode;
+    private final String unitID;
     private final UnitType unitType;
     private final int playerID;
     private final Image unitImage;
     private final Image unitImageBig;
+    UnitPersistor unitPersistor = new UnitPersistor();
 
-    public Unit(int unitID) {
-        this.unitID = unitID;
-        this.playerID = unitID < 17 ? 1 : (unitID >= 18 && unitID <= 35) ? 2 : 0; // 0 for no player
-        this.unitType = switch (unitID) {
+    public Unit(int unitCode) {
+        this.unitCode = unitCode;
+        this.playerID = unitCode < 17 ? 1 : (unitCode >= 18 && unitCode <= 35) ? 2 : 0; // 0 for no player
+        this.unitType = switch (unitCode) {
             case 0, 18 -> UnitType.INFANTRY;
             case 1, 19 -> UnitType.MECH_INFANTRY;
             case 2, 20 -> UnitType.RECON;
@@ -33,9 +36,9 @@ public class Unit {
             case 16, 34 -> UnitType.LANDER;
             case 17, 35 -> UnitType.SUBMARINE;
             case 36 -> null; // No unit
-            default -> throw new IllegalArgumentException("Unknown unit value: " + unitID);
+            default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
         };
-        this.unitImage = switch (unitID) {
+        this.unitImage = switch (unitCode) {
             case 0 -> new Image("/entities/sprites/orange_infantry.png");
             case 1 -> new Image("/entities/sprites/orange_mech.png");
             case 2 -> new Image("/entities/sprites/orange_recon.png");
@@ -73,9 +76,9 @@ public class Unit {
             case 34 -> new Image("/entities/sprites/blue_lander.png");
             case 35 -> new Image("/entities/sprites/blue_sub.png");
             case 36 -> null; // No unit image
-            default -> throw new IllegalArgumentException("Unknown unit value: " + unitID);
+            default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
         };
-        this.unitImageBig = switch (unitID) {
+        this.unitImageBig = switch (unitCode) {
             case 0 -> new Image("/entities/sprites/orange_infantry_big.png");
             case 1 -> new Image("/entities/sprites/orange_mech_big.png");
             case 2 -> new Image("/entities/sprites/orange_recon_big.png");
@@ -113,12 +116,23 @@ public class Unit {
             case 34 -> new Image("/entities/sprites/blue_lander_big.png");
             case 35 -> new Image("/entities/sprites/blue_sub_big.png");
             case 36 -> null; // No big unit image
-            default -> throw new IllegalArgumentException("Unknown unit value: " + unitID);
+            default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
         };
+        this.unitID = generateUnitID();
+        unitPersistor.addUnit(this);
     }
 
-    public int getUnitID() {
-        return unitID;
+    private String generateUnitID() {
+        // Generate a random String for the unit ID
+        String UnitIDString = unitType + "_" + System.currentTimeMillis();
+        while (!unitPersistor.isUnitIDAvailable(UnitIDString)) {
+            UnitIDString = unitType + "_" + System.currentTimeMillis();
+        }
+        return UnitIDString;
+    }
+
+    public int getUnitCode() {
+        return unitCode;
     }
 
     public UnitType getUnitType() {
@@ -143,5 +157,9 @@ public class Unit {
 
     public boolean isBlue() {
         return playerID == 2;
+    }
+
+    public String getUnitID() {
+        return unitID;
     }
 }
