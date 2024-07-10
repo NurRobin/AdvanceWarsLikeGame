@@ -1,5 +1,6 @@
 package de.nurrobin.model;
 
+import de.nurrobin.enums.MovementType;
 import de.nurrobin.enums.UnitType;
 import de.nurrobin.persistor.UnitPersistor;
 import javafx.scene.image.Image;
@@ -8,6 +9,7 @@ public class Unit {
     private final int unitCode;
     private final String unitID;
     private final UnitType unitType;
+    private final MovementType movementType;
     private final int playerID;
     private final Image unitImage;
     private final Image unitImageBig;
@@ -119,6 +121,7 @@ public class Unit {
             default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
         };
         this.unitID = generateUnitID();
+        this.movementType = unitType.getMovementType();
         unitPersistor.addUnit(this);
     }
 
@@ -161,5 +164,9 @@ public class Unit {
 
     public String getUnitID() {
         return unitID;
+    }
+
+    public MovementType getMovementType() {
+        return movementType;
     }
 }
