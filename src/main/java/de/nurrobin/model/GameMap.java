@@ -2,7 +2,6 @@ package de.nurrobin.model;
 
 import de.nurrobin.util.Logger;
 import de.nurrobin.util.StringUtils;
-import java.util.Map;
 
 import static de.nurrobin.enums.ResourceType.*;
 import static de.nurrobin.enums.UnderlayingResourceType.*;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 public class GameMap {
     private final Logger logger = new Logger(GameMap.class);
@@ -37,33 +37,33 @@ public class GameMap {
         loadMap(mapFilePath);
     }
 
-private void loadMap(String mapFilePath) throws IOException, URISyntaxException {
-    logger.logDebug("Loading map from file: " + mapFilePath);
-    String content = Files.readString(Paths.get(GameMap.class.getResource(mapFilePath.toString()).toURI()));
-    
-    try {
-        this.players = StringUtils.extractIntValue(content, "\"players\": (\\d+),");
-        String[] dimensions = StringUtils.extractStringValue(content, "\"size\": \"([\\d x]+)\",").split(" x ");
-        this.width = Integer.parseInt(dimensions[0].trim());
-        this.height = Integer.parseInt(dimensions[1].trim());
-        
-        this.hq = StringUtils.extractBooleanValue(content, "\"HQ\": (true|false),");
-        this.cities = StringUtils.extractBooleanValue(content, "\"Cities\": (true|false),");
-        this.bases = StringUtils.extractBooleanValue(content, "\"Bases\": (true|false),");
-        this.airports = StringUtils.extractBooleanValue(content, "\"Airports\": (true|false),");
-        this.ports = StringUtils.extractBooleanValue(content, "\"Ports\": (true|false)");
-        
-        this.imageFile = StringUtils.extractStringValue(content, "\"imageFile\": \"([^\"]+)\",");
-        String tilesFilePath = StringUtils.extractStringValue(content, "\"tilesFile\": \"([^\"]+)\"");
-        String unitsFilePath = StringUtils.extractStringValue(content, "\"unitsFile\": \"([^\"]+)\"");
-        
-        loadTiles(tilesFilePath);
-        loadUnits(unitsFilePath);
+    private void loadMap(String mapFilePath) throws IOException, URISyntaxException {
+        logger.logDebug("Loading map from file: " + mapFilePath);
+        String content = Files.readString(Paths.get(GameMap.class.getResource(mapFilePath.toString()).toURI()));
 
-    } catch (Exception e) {
-        throw new IOException("Failed to parse map file: " + mapFilePath, e);
+        try {
+            this.players = StringUtils.extractIntValue(content, "\"players\": (\\d+),");
+            String[] dimensions = StringUtils.extractStringValue(content, "\"size\": \"([\\d x]+)\",").split(" x ");
+            this.width = Integer.parseInt(dimensions[0].trim());
+            this.height = Integer.parseInt(dimensions[1].trim());
+
+            this.hq = StringUtils.extractBooleanValue(content, "\"HQ\": (true|false),");
+            this.cities = StringUtils.extractBooleanValue(content, "\"Cities\": (true|false),");
+            this.bases = StringUtils.extractBooleanValue(content, "\"Bases\": (true|false),");
+            this.airports = StringUtils.extractBooleanValue(content, "\"Airports\": (true|false),");
+            this.ports = StringUtils.extractBooleanValue(content, "\"Ports\": (true|false)");
+
+            this.imageFile = StringUtils.extractStringValue(content, "\"imageFile\": \"([^\"]+)\",");
+            String tilesFilePath = StringUtils.extractStringValue(content, "\"tilesFile\": \"([^\"]+)\"");
+            String unitsFilePath = StringUtils.extractStringValue(content, "\"unitsFile\": \"([^\"]+)\"");
+
+            loadTiles(tilesFilePath);
+            loadUnits(unitsFilePath);
+
+        } catch (Exception e) {
+            throw new IOException("Failed to parse map file: " + mapFilePath, e);
+        }
     }
-}
 
     private void loadTiles(String tilesFilePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(tilesFilePath))) {
@@ -112,22 +112,22 @@ private void loadMap(String mapFilePath) throws IOException, URISyntaxException 
     }
 
     private static final Map<String, Integer> UNIT_MAP = Map.ofEntries(
-        Map.entry("0", 0), Map.entry("1", 1), Map.entry("2", 2), Map.entry("3", 3), Map.entry("4", 4),
-        Map.entry("5", 5), Map.entry("6", 6), Map.entry("7", 7), Map.entry("8", 8), Map.entry("9", 9),
-        Map.entry("A", 10), Map.entry("B", 11), Map.entry("C", 12), Map.entry("D", 13), Map.entry("E", 14),
-        Map.entry("F", 15), Map.entry("G", 16), Map.entry("H", 17), Map.entry("I", 18), Map.entry("J", 19),
-        Map.entry("K", 20), Map.entry("L", 21), Map.entry("M", 22), Map.entry("N", 23), Map.entry("O", 24),
-        Map.entry("P", 25), Map.entry("Q", 26), Map.entry("R", 27), Map.entry("S", 28), Map.entry("T", 29),
-        Map.entry("U", 30), Map.entry("V", 31), Map.entry("W", 32), Map.entry("X", 33), Map.entry("Y", 34),
-        Map.entry("Z", 35), Map.entry("x", 36)
+            Map.entry("0", 0), Map.entry("1", 1), Map.entry("2", 2), Map.entry("3", 3), Map.entry("4", 4),
+            Map.entry("5", 5), Map.entry("6", 6), Map.entry("7", 7), Map.entry("8", 8), Map.entry("9", 9),
+            Map.entry("A", 10), Map.entry("B", 11), Map.entry("C", 12), Map.entry("D", 13), Map.entry("E", 14),
+            Map.entry("F", 15), Map.entry("G", 16), Map.entry("H", 17), Map.entry("I", 18), Map.entry("J", 19),
+            Map.entry("K", 20), Map.entry("L", 21), Map.entry("M", 22), Map.entry("N", 23), Map.entry("O", 24),
+            Map.entry("P", 25), Map.entry("Q", 26), Map.entry("R", 27), Map.entry("S", 28), Map.entry("T", 29),
+            Map.entry("U", 30), Map.entry("V", 31), Map.entry("W", 32), Map.entry("X", 33), Map.entry("Y", 34),
+            Map.entry("Z", 35), Map.entry("x", 36)
     );
-    
+
     private static final Map<String, Integer> TILE_MAP = Map.ofEntries(
-        Map.entry("0", 0), Map.entry("1", 1), Map.entry("2", 2), Map.entry("3", 3), Map.entry("4", 4),
-        Map.entry("5", 5), Map.entry("6", 6), Map.entry("7", 7), Map.entry("8", 8), Map.entry("9", 9),
-        Map.entry("A", 10), Map.entry("B", 11), Map.entry("C", 12), Map.entry("D", 13), Map.entry("E", 14),
-        Map.entry("F", 15), Map.entry("G", 16), Map.entry("H", 17), Map.entry("I", 18), Map.entry("J", 19),
-        Map.entry("K", 20)
+            Map.entry("0", 0), Map.entry("1", 1), Map.entry("2", 2), Map.entry("3", 3), Map.entry("4", 4),
+            Map.entry("5", 5), Map.entry("6", 6), Map.entry("7", 7), Map.entry("8", 8), Map.entry("9", 9),
+            Map.entry("A", 10), Map.entry("B", 11), Map.entry("C", 12), Map.entry("D", 13), Map.entry("E", 14),
+            Map.entry("F", 15), Map.entry("G", 16), Map.entry("H", 17), Map.entry("I", 18), Map.entry("J", 19),
+            Map.entry("K", 20)
     );
 
     private int parseUnitValue(String unitValue) {
@@ -145,7 +145,6 @@ private void loadMap(String mapFilePath) throws IOException, URISyntaxException 
         }
         return value;
     }
-    
 
     public int getPlayers() {
         return players;
@@ -192,6 +191,6 @@ private void loadMap(String mapFilePath) throws IOException, URISyntaxException 
     public Unit getUnitAt(int i, int j) {
         // Return a new Unit object with the correct image based on the unit at position i, j
         int unitValue = units[i][j];
-        return new Unit(unitValue);
+        return new Unit(unitValue, i, j);
     }
 }

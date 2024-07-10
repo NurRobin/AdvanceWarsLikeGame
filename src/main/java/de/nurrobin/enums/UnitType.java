@@ -1,32 +1,38 @@
 package de.nurrobin.enums;
 
 public enum UnitType {
-    INFANTRY(MovementType.FOOT),
-    MECH_INFANTRY(MovementType.BOOTS),
-    RECON(MovementType.TIRES),
-    TANK(MovementType.TREADS),
-    MEDIUM_TANK(MovementType.TREADS),
-    APC(MovementType.TREADS),
-    ARTILLERY(MovementType.TREADS),
-    ROCKETS(MovementType.TREADS),
-    ANTI_AIR(MovementType.TREADS),
-    MISSILES(MovementType.TREADS),
-    FIGHTER(MovementType.AIR),
-    BOMBER(MovementType.AIR),
-    BATTLE_COPTER(MovementType.AIR),
-    TRANSPORT_COPTER(MovementType.AIR),
-    BATTLESHIP(MovementType.SEA),
-    CRUISER(MovementType.SEA),
-    SUBMARINE(MovementType.SEA),
-    LANDER(MovementType.LANDER);
+    INFANTRY(MovementType.FOOT, 3),
+    MECH_INFANTRY(MovementType.BOOTS, 2),
+    RECON(MovementType.TIRES, 8),
+    TANK(MovementType.TREADS, 6),
+    MEDIUM_TANK(MovementType.TREADS, 5),
+    APC(MovementType.TREADS, 6),
+    ARTILLERY(MovementType.TREADS, 5),
+    ROCKETS(MovementType.TREADS, 5),
+    ANTI_AIR(MovementType.TREADS, 6),
+    MISSILES(MovementType.TREADS, 4),
+    FIGHTER(MovementType.AIR, 9),
+    BOMBER(MovementType.AIR, 7),
+    BATTLE_COPTER(MovementType.AIR, 6),
+    TRANSPORT_COPTER(MovementType.AIR, 6),
+    BATTLESHIP(MovementType.SEA, 5),
+    CRUISER(MovementType.SEA, 6),
+    SUBMARINE(MovementType.SEA, 5),
+    LANDER(MovementType.LANDER, 6);
 
     private final MovementType movementType;
+    private final int movementRadius;
 
-    UnitType(MovementType movementType) {
+    UnitType(MovementType movementType, int movementRadius) {
         this.movementType = movementType;
+        this.movementRadius = movementRadius;
     }
 
     public MovementType getMovementType() {
         return movementType;
+    }
+
+    public int getMovementRadius() {
+        return movementRadius;
     }
 }

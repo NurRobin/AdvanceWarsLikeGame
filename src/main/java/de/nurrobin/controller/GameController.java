@@ -14,10 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class GameController {
 
@@ -98,6 +95,7 @@ public class GameController {
 
     private void readyMovementLayer(Tile tile, int tileSize, StackPane tileStack) {
         // This Layer is meant for semi-transparent tiles to show where the player can move a clicked unit but until then it's an empty layer
+
         
     }
 
@@ -139,16 +137,98 @@ public class GameController {
 
     private void visualizeMovementOptions() {
         if (selectedUnit != null) {
-            // Calculate reachable tiles based on the unit's position and movement ability
             List<Tile> reachableTiles = calculateReachableTiles(selectedUnit);
+
+            // Get the position of the selected unit
+            int unitX = selectedUnit.getX();
+            int unitY = selectedUnit.getY();
+
+            int movementRadius = selectedUnit.getMovementRadius();
+            int mapWidth = game.getMap().getWidth();
+
             for (Tile tile : reachableTiles) {
-                //TODO: Implement logic to visualize reachable tiles
+                int tileX = tile.getX();
+                int tileY = tile.getY();
+
+                // Calculate the position in the gameBoard pane
+                int offsetX = tileX - unitX;
+                int offsetY = tileY - unitY;
+
+                // Adjust tileStack position to center the movement range around the unit
+                int stackIndex = (unitY + offsetY) * mapWidth + (unitX + offsetX);
+                if (stackIndex >= 0 && stackIndex < gameBoard.getChildren().size()) {
+                    StackPane tileStack = (StackPane) gameBoard.getChildren().get(stackIndex);
+                    renderMovementLayer(tile, tileStack);
+                }
             }
         }
     }
 
-    private List<Tile> calculateReachableTiles(Unit unit) {
-        //TODO: Implement logic to calculate reachable tiles based on the unit's position and movement radius
-        return new ArrayList<>();
+    private void renderMovementLayer(Tile tile, StackPane tileStack) {
+        // Create a semi-transparent overlay to show reachable tiles
+        Pane overlay = new Pane();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 255, 0.2);"); // Semi-transparent blue overlay
+        overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
+        tileStack.getChildren().add(overlay);
     }
+
+    private List<Tile> calculateReachableTiles(Unit unit) {
+
+
+        List<Tile> reachableTiles = new ArrayList<>();
+        int movementRadius = unit.getMovementRadius();
+        int startX = unit.getX();
+        int startY = unit.getY();
+
+        boolean[][] visited = new boolean[game.getMap().getHeight()][game.getMap().getWidth()];
+
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{startX, startY, 0});
+        visited[startY][startX] = true;
+        logger.logDebug(startX + " x  coordinaten Unit  y "+ startY);
+
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int x = current[0];
+            int y = current[1];
+            int distance = current[2];
+
+            //logger.logDebug(x + " x 0  current 1 y "+ y);
+
+            if (distance > movementRadius) continue;
+
+            //logger.logDebug("distance: " + distance + "> movementRadius" + movementRadius);
+
+            reachableTiles.add(game.getMap().getTileAt(y, x));
+
+
+            int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+            for (int[] dir : directions) {
+                int newX = x + dir[0];
+                int newY = y + dir[1];
+
+                if (isValidPosition(newX, newY) && !visited[newY][newX]) {
+                    queue.add(new int[]{newX, newY, distance + 1});
+                    visited[newY][newX] = false;
+
+                    // Update position of units if needed
+                    Unit newUnit = game.getMap().getUnitAt(newY, newX);
+                    if (newUnit != null) {
+                        newUnit.setX(newX);
+                        newUnit.setY(newY);
+                    }
+                }
+            }
+
+        }
+
+        return reachableTiles;
+
+    }
+
+    private boolean isValidPosition(int x, int y) {
+        return x >= 0 && x < game.getMap().getWidth() &&
+                y >= 0 && y < game.getMap().getHeight();
+    }
+
 }
