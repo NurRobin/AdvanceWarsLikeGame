@@ -1,14 +1,16 @@
 package de.nurrobin.model;
 
+import de.nurrobin.util.Logger;
 import de.nurrobin.util.StringUtils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Map {
+    private final Logger logger = new Logger(Map.class);
+
     private int players;
     private int width;
     private int height;
@@ -28,6 +30,7 @@ public class Map {
     }
 
 private void loadMap(String mapFileName) throws IOException {
+    logger.logDebug("Loading map from file: " + mapFileName);
     String content = Files.readString(Paths.get(mapFileName));
     
     try {
@@ -48,6 +51,7 @@ private void loadMap(String mapFileName) throws IOException {
         
         loadTiles(tilesFilePath);
         loadUnits(unitsFilePath);
+
     } catch (Exception e) {
         throw new IOException("Failed to parse map file: " + mapFileName, e);
     }

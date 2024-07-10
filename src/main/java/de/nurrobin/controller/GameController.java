@@ -21,6 +21,10 @@ public class GameController {
     private final Logger logger = new Logger(GameController.class);
     private final Random random = new Random();
 
+    private int tileCount;
+    private int objectCount;
+    private int unitCount;
+
     @FXML
     private Pane gameBoard;
 
@@ -65,6 +69,7 @@ public class GameController {
 
                 // Layer 0: Background layer -> only plains or sea tiles
                 ImageView background = new ImageView(tile.getBackgroundImage());
+                tileCount++;
                 background.setFitWidth(tileSize);
                 background.setFitHeight(tileSize);
                 tileStack.getChildren().add(background);
@@ -72,14 +77,16 @@ public class GameController {
                 // Layer 1: Object layer
                 if (tile.hasObject()) {
                     ImageView object = new ImageView(tile.getObjectImage());
+                    objectCount++;
                     object.setFitWidth(tileSize);
                     object.setFitHeight(tileSize);
                     tileStack.getChildren().add(object);
                 }
 
                 // Layer 2: Interactive layer -> units
-                if (unit != null) {
+                if (unit.getUnitID() != 36) {
                     ImageView unitImage = new ImageView(unit.getImage());
+                    unitCount++;
                     unitImage.setFitWidth(tileSize);
                     unitImage.setFitHeight(tileSize);
                     tileStack.getChildren().add(unitImage);
@@ -90,6 +97,7 @@ public class GameController {
                 gameBoard.getChildren().add(tileStack);
             }
         }
+        logger.logDebug("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
     }
 
 }
