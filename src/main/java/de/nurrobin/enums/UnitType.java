@@ -1,4 +1,4 @@
-package de.nurrobin.model;
+package de.nurrobin.enums;
 
 public enum UnitType {
     INFANTRY,
