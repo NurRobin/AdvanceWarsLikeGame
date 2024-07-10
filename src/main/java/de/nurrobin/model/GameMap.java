@@ -3,6 +3,11 @@ package de.nurrobin.model;
 import de.nurrobin.util.Logger;
 import de.nurrobin.util.StringUtils;
 import java.util.Map;
+
+import static de.nurrobin.enums.ResourceType.*;
+import static de.nurrobin.enums.UnderlayingResourceType.*;
+import static de.nurrobin.util.ResourceURLBuilder.buildURL;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,7 +31,8 @@ public class GameMap {
 
     public GameMap(String mapFileName) throws IOException {
         // Load map data from file in resources/maps/mapFileName.map
-        String mapFilePath = "src/main/resources/maps/" + mapFileName;
+        mapFileName = mapFileName.replace(".map", "");
+        String mapFilePath = buildURL(MAP, MAPFILE, mapFileName);
         loadMap(mapFilePath);
     }
 
