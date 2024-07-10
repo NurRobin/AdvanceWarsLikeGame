@@ -1,5 +1,8 @@
 package de.nurrobin.model;
 
+import java.util.Map;
+
+import de.nurrobin.enums.MovementType;
 import de.nurrobin.enums.TerrainType;
 import javafx.scene.image.Image;
 
@@ -9,6 +12,10 @@ public class Tile {
     private final boolean hasObject;
     private final Image backgroundImage;
     private Image objectImage;
+
+    private final int defenseBonus;
+    private final Map<MovementType, Integer> movementCosts;
+
 
     public Tile(int tileID) {
         this.tileID = tileID;
@@ -62,8 +69,12 @@ public class Tile {
 //                case 20 -> new Image("/buildings/textures/Port-Blue.png");
                 default -> throw new IllegalArgumentException("Unknown tile value: " + tileID);
             };
+
+            this.defenseBonus = this.terrain.getType().getDefenseBonus();
+
+            this.movementCosts = this.terrain.getType().getMovementCosts();
+            }
         }
-    }
 
     public int getTileID() {
         return tileID;
@@ -83,5 +94,13 @@ public class Tile {
 
     public Image getObjectImage() {
         return objectImage;
+    }
+
+    public int getDefenseBonus() {
+        return defenseBonus;
+    }
+
+    public Map<MovementType, Integer> getMovementCosts() {
+        return movementCosts;
     }
 }
