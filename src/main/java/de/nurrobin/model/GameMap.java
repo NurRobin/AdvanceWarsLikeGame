@@ -11,6 +11,7 @@ import static de.nurrobin.util.ResourceURLBuilder.buildURL;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -29,16 +30,16 @@ public class GameMap {
     private int[][] tiles;
     private int[][] units;
 
-    public GameMap(String mapFileName) throws IOException {
+    public GameMap(String mapFileName) throws IOException, URISyntaxException {
         // Load map data from file in resources/maps/mapFileName.map
         mapFileName = mapFileName.replace(".map", "");
         String mapFilePath = buildURL(MAP, MAPFILE, mapFileName);
         loadMap(mapFilePath);
     }
 
-private void loadMap(String mapFileName) throws IOException {
-    logger.logDebug("Loading map from file: " + mapFileName);
-    String content = Files.readString(Paths.get(mapFileName));
+private void loadMap(String mapFilePath) throws IOException, URISyntaxException {
+    logger.logDebug("Loading map from file: " + mapFilePath);
+    String content = Files.readString(Paths.get(GameMap.class.getResource(mapFilePath.toString()).toURI()));
     
     try {
         this.players = StringUtils.extractIntValue(content, "\"players\": (\\d+),");
@@ -60,7 +61,7 @@ private void loadMap(String mapFileName) throws IOException {
         loadUnits(unitsFilePath);
 
     } catch (Exception e) {
-        throw new IOException("Failed to parse map file: " + mapFileName, e);
+        throw new IOException("Failed to parse map file: " + mapFilePath, e);
     }
 }
 

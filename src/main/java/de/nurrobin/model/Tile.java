@@ -37,8 +37,8 @@ public class Tile {
     );
 
     private static final Map<Integer, String> OBJECT_IMAGE_MAP = Map.ofEntries(
-        Map.entry(1, "woods"),
-        Map.entry(2, "mountains"),
+        Map.entry(1, "wood"),
+        Map.entry(2, "mountain"),
         Map.entry(4, "road"),
         Map.entry(5, "road"),
         Map.entry(7, "HQ-Orange"),
@@ -82,7 +82,7 @@ public class Tile {
     }
 
     private ResourceType getResourceType(int tileID) {
-        if (tileID >= 9 && tileID <= 20) {
+        if (tileID >= 6 && tileID <= 20) {
             return BUILDING;
         }
         return TILE;

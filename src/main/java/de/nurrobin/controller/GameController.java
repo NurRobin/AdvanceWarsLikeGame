@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +36,7 @@ public class GameController {
     private Game game;
 
     @FXML
-    public void initialize() throws FileNotFoundException {
+    public void initialize() throws FileNotFoundException, URISyntaxException {
         final String randomMapName = getRandomMapName();
         logger.logInfo("Loading map: " + randomMapName);
         try {
@@ -147,8 +148,7 @@ public class GameController {
     }
 
     private List<Tile> calculateReachableTiles(Unit unit) {
-        // Implement logic to calculate reachable tiles based on the unit's position and movement radius
-        // This is a placeholder implementation
+        //TODO: Implement logic to calculate reachable tiles based on the unit's position and movement radius
         return new ArrayList<>();
     }
 }

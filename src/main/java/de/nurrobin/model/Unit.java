@@ -70,8 +70,15 @@ public class Unit {
         this.unitCode = unitCode;
         this.playerID = determinePlayerID(unitCode);
         this.unitType = UNIT_TYPE_MAP.getOrDefault(unitCode, null);
-        if (unitType == null) {
+        if (unitType == null && unitCode != 36) {
             throw new IllegalArgumentException("Unknown unit value: " + unitCode);
+        }
+        if (unitCode == 36) {
+            this.unitImage = null;
+            this.unitImageBig = null;
+            this.unitID = null;
+            this.movementType = null;
+            return;
         }
         this.unitImage = loadImage(unitCode, false);
         this.unitImageBig = loadImage(unitCode, true);
