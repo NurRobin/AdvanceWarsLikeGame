@@ -59,6 +59,11 @@ public class GameController {
         int width = map.getWidth();
         int height = map.getHeight();
 
+        renderLoop(height, width, tileSize, map);
+        logger.logDebug("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
+    }
+
+    private void renderLoop(int height, int width, int tileSize, Map map) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 StackPane tileStack = new StackPane();
@@ -68,36 +73,47 @@ public class GameController {
                 Unit unit = map.getUnitAt(i, j);
 
                 // Layer 0: Background layer -> only plains or sea tiles
-                ImageView background = new ImageView(tile.getBackgroundImage());
-                tileCount++;
-                background.setFitWidth(tileSize);
-                background.setFitHeight(tileSize);
-                tileStack.getChildren().add(background);
+                renderBackgroundLayer(tile, tileSize, tileStack);
 
                 // Layer 1: Object layer
-                if (tile.hasObject()) {
-                    ImageView object = new ImageView(tile.getObjectImage());
-                    objectCount++;
-                    object.setFitWidth(tileSize);
-                    object.setFitHeight(tileSize);
-                    tileStack.getChildren().add(object);
-                }
+                renderObjectLayer(tile, tileSize, tileStack);
 
                 // Layer 2: Interactive layer -> units
-                if (unit.getUnitID() != 36) {
-                    ImageView unitImage = new ImageView(unit.getImage());
-                    unitCount++;
-                    unitImage.setFitWidth(tileSize);
-                    unitImage.setFitHeight(tileSize);
-                    tileStack.getChildren().add(unitImage);
-                }
+                renderSpriteLayer(unit, tileSize, tileStack);
 
                 tileStack.setLayoutX(j * tileSize);
                 tileStack.setLayoutY(i * tileSize);
                 gameBoard.getChildren().add(tileStack);
             }
         }
-        logger.logDebug("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
+    }
+
+    private void renderBackgroundLayer(Tile tile, int tileSize, StackPane tileStack) {
+        ImageView background = new ImageView(tile.getBackgroundImage());
+        tileCount++;
+        background.setFitWidth(tileSize);
+        background.setFitHeight(tileSize);
+        tileStack.getChildren().add(background);
+    }
+
+    private void renderObjectLayer(Tile tile, int tileSize, StackPane tileStack) {
+        if (tile.hasObject()) {
+            ImageView object = new ImageView(tile.getObjectImage());
+            objectCount++;
+            object.setFitWidth(tileSize);
+            object.setFitHeight(tileSize);
+            tileStack.getChildren().add(object);
+        }
+    }
+
+    private void renderSpriteLayer(Unit unit, int tileSize, StackPane tileStack) {
+        if (unit.getUnitID() != 36) {
+            ImageView unitImage = new ImageView(unit.getImage());
+            unitCount++;
+            unitImage.setFitWidth(tileSize);
+            unitImage.setFitHeight(tileSize);
+            tileStack.getChildren().add(unitImage);
+        }
     }
 
 }
