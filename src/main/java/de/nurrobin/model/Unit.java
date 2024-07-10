@@ -1,5 +1,6 @@
 package de.nurrobin.model;
 
+import de.nurrobin.enums.UnitType;
 import javafx.scene.image.Image;
 
 public class Unit {

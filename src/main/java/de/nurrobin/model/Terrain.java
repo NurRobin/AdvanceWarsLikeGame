@@ -1,5 +1,7 @@
 package de.nurrobin.model;
 
+import de.nurrobin.enums.TerrainType;
+
 public class Terrain {
     private TerrainType type;
     private String propertyOwner;

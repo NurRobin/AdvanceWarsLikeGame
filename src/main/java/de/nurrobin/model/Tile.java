@@ -1,5 +1,6 @@
 package de.nurrobin.model;
 
+import de.nurrobin.enums.TerrainType;
 import javafx.scene.image.Image;
 
 public class Tile {
@@ -11,7 +12,7 @@ public class Tile {
 
     public Tile(int tileID) {
         this.tileID = tileID;
-        this.hasObject = tileID > 5;
+        this.hasObject = (tileID != 0 && tileID != 3);
         if (tileID != 3 && tileID != 5) {
             this.backgroundImage = new Image("/tiles/textures/plain.png");
         } else {
@@ -42,20 +43,23 @@ public class Tile {
         };
         if (hasObject) {
             this.objectImage = switch (tileID) {
+                case 1 -> new Image("/tiles/textures/wood.png");
+                case 2 -> new Image("/tiles/textures/mountain.png");
+                case 4, 5 -> new Image("/tiles/textures/road.png");
                 case 7 -> new Image("/buildings/textures/HQ-Orange.png");
                 case 8 -> new Image("/buildings/textures/HQ-Blue.png");
-                case 9 -> new Image("/buildings/textures/City-Neutral.png");
-                case 10 -> new Image("/buildings/textures/City-Orange.png");
-                case 11 -> new Image("/buildings/textures/City-Blue.png");
+                case 9,10,11 -> new Image("/buildings/textures/City-Neutral.png");
+//                case 10 -> new Image("/buildings/textures/City-Orange.png");
+//                case 11 -> new Image("/buildings/textures/City-Blue.png");
                 case 12 -> new Image("/buildings/textures/Base-Neutral.png");
                 case 13 -> new Image("/buildings/textures/Base-Orange.png");
                 case 14 -> new Image("/buildings/textures/Base-Blue.png");
-                case 15 -> new Image("/buildings/textures/Airport-Neutral.png");
-                case 16 -> new Image("/buildings/textures/Airport-Orange.png");
-                case 17 -> new Image("/buildings/textures/Airport-Blue.png");
-                case 18 -> new Image("/buildings/textures/Port-Neutral.png");
-                case 19 -> new Image("/buildings/textures/Port-Orange.png");
-                case 20 -> new Image("/buildings/textures/Port-Blue.png");
+                case 15,16,17 -> new Image("/buildings/textures/Airport-Neutral.png");
+//                case 16 -> new Image("/buildings/textures/Airport-Orange.png");
+//                case 17 -> new Image("/buildings/textures/Airport-Blue.png");
+                case 18,19,20 -> new Image("/buildings/textures/Port-Neutral.png");
+//                case 19 -> new Image("/buildings/textures/Port-Orange.png");
+//                case 20 -> new Image("/buildings/textures/Port-Blue.png");
                 default -> throw new IllegalArgumentException("Unknown tile value: " + tileID);
             };
         }
