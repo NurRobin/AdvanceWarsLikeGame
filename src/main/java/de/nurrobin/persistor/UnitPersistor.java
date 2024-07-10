@@ -35,4 +35,13 @@ public class UnitPersistor {
     public boolean isUnitIDAvailable(String unitID) {
         return units.stream().noneMatch(unit -> unit.getUnitID().equals(unitID));
     }
+
+    public void updateUnit(Unit unit) {
+        for (int i = 0; i < units.size(); i++) {
+            if (units.get(i).getUnitID().equals(unit.getUnitID())) {
+                units.set(i, unit);
+                return;
+            }
+        }
+    }
 }

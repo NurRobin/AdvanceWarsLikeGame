@@ -11,8 +11,8 @@ public class Unit {
     private final UnitType unitType;
     private final MovementType movementType;
     private final int playerID;
-    private final Image unitImage;
-    private final Image unitImageBig;
+    private Image unitImage;
+    private Image unitImageBig;
     UnitPersistor unitPersistor = new UnitPersistor();
 
     public Unit(int unitCode) {
@@ -40,46 +40,15 @@ public class Unit {
             case 36 -> null; // No unit
             default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
         };
-        this.unitImage = switch (unitCode) {
-            case 0 -> new Image("/entities/sprites/orange_infantry.png");
-            case 1 -> new Image("/entities/sprites/orange_mech.png");
-            case 2 -> new Image("/entities/sprites/orange_recon.png");
-            case 3 -> new Image("/entities/sprites/orange_tank.png");
-            case 4 -> new Image("/entities/sprites/orange_midtank.png");
-            case 5 -> new Image("/entities/sprites/orange_apc.png");
-            case 6 -> new Image("/entities/sprites/orange_artillery.png");
-            case 7 -> new Image("/entities/sprites/orange_rocket.png");
-            case 8 -> new Image("/entities/sprites/orange_antiair.png");
-            case 9 -> new Image("/entities/sprites/orange_missile.png");
-            case 10 -> new Image("/entities/sprites/orange_fighter.png");
-            case 11 -> new Image("/entities/sprites/orange_bomber.png");
-            case 12 -> new Image("/entities/sprites/orange_bcopter.png");
-            case 13 -> new Image("/entities/sprites/orange_tcopter.png");
-            case 14 -> new Image("/entities/sprites/orange_bship.png");
-            case 15 -> new Image("/entities/sprites/orange_cruiser.png");
-            case 16 -> new Image("/entities/sprites/orange_lander.png");
-            case 17 -> new Image("/entities/sprites/orange_sub.png");
-            case 18 -> new Image("/entities/sprites/blue_infantry.png");
-            case 19 -> new Image("/entities/sprites/blue_mech.png");
-            case 20 -> new Image("/entities/sprites/blue_recon.png");
-            case 21 -> new Image("/entities/sprites/blue_tank.png");
-            case 22 -> new Image("/entities/sprites/blue_midtank.png");
-            case 23 -> new Image("/entities/sprites/blue_apc.png");
-            case 24 -> new Image("/entities/sprites/blue_artillery.png");
-            case 25 -> new Image("/entities/sprites/blue_rocket.png");
-            case 26 -> new Image("/entities/sprites/blue_antiair.png");
-            case 27 -> new Image("/entities/sprites/blue_missile.png");
-            case 28 -> new Image("/entities/sprites/blue_fighter.png");
-            case 29 -> new Image("/entities/sprites/blue_bomber.png");
-            case 30 -> new Image("/entities/sprites/blue_bcopter.png");
-            case 31 -> new Image("/entities/sprites/blue_tcopter.png");
-            case 32 -> new Image("/entities/sprites/blue_bship.png");
-            case 33 -> new Image("/entities/sprites/blue_cruiser.png");
-            case 34 -> new Image("/entities/sprites/blue_lander.png");
-            case 35 -> new Image("/entities/sprites/blue_sub.png");
-            case 36 -> null; // No unit image
-            default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
-        };
+        initUnitImage(unitCode);
+        initUnitImageBig(unitCode);
+        this.unitID = generateUnitID();
+        assert unitType != null;
+        this.movementType = unitType.getMovementType();
+        unitPersistor.addUnit(this);
+    }
+
+    private void initUnitImageBig(int unitCode) {
         this.unitImageBig = switch (unitCode) {
             case 0 -> new Image("/entities/sprites/orange_infantry_big.png");
             case 1 -> new Image("/entities/sprites/orange_mech_big.png");
@@ -120,9 +89,49 @@ public class Unit {
             case 36 -> null; // No big unit image
             default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
         };
-        this.unitID = generateUnitID();
-        this.movementType = unitType.getMovementType();
-        unitPersistor.addUnit(this);
+    }
+
+    private void initUnitImage(int unitCode) {
+        this.unitImage = switch (unitCode) {
+            case 0 -> new Image("/entities/sprites/orange_infantry.png");
+            case 1 -> new Image("/entities/sprites/orange_mech.png");
+            case 2 -> new Image("/entities/sprites/orange_recon.png");
+            case 3 -> new Image("/entities/sprites/orange_tank.png");
+            case 4 -> new Image("/entities/sprites/orange_midtank.png");
+            case 5 -> new Image("/entities/sprites/orange_apc.png");
+            case 6 -> new Image("/entities/sprites/orange_artillery.png");
+            case 7 -> new Image("/entities/sprites/orange_rocket.png");
+            case 8 -> new Image("/entities/sprites/orange_antiair.png");
+            case 9 -> new Image("/entities/sprites/orange_missile.png");
+            case 10 -> new Image("/entities/sprites/orange_fighter.png");
+            case 11 -> new Image("/entities/sprites/orange_bomber.png");
+            case 12 -> new Image("/entities/sprites/orange_bcopter.png");
+            case 13 -> new Image("/entities/sprites/orange_tcopter.png");
+            case 14 -> new Image("/entities/sprites/orange_bship.png");
+            case 15 -> new Image("/entities/sprites/orange_cruiser.png");
+            case 16 -> new Image("/entities/sprites/orange_lander.png");
+            case 17 -> new Image("/entities/sprites/orange_sub.png");
+            case 18 -> new Image("/entities/sprites/blue_infantry.png");
+            case 19 -> new Image("/entities/sprites/blue_mech.png");
+            case 20 -> new Image("/entities/sprites/blue_recon.png");
+            case 21 -> new Image("/entities/sprites/blue_tank.png");
+            case 22 -> new Image("/entities/sprites/blue_midtank.png");
+            case 23 -> new Image("/entities/sprites/blue_apc.png");
+            case 24 -> new Image("/entities/sprites/blue_artillery.png");
+            case 25 -> new Image("/entities/sprites/blue_rocket.png");
+            case 26 -> new Image("/entities/sprites/blue_antiair.png");
+            case 27 -> new Image("/entities/sprites/blue_missile.png");
+            case 28 -> new Image("/entities/sprites/blue_fighter.png");
+            case 29 -> new Image("/entities/sprites/blue_bomber.png");
+            case 30 -> new Image("/entities/sprites/blue_bcopter.png");
+            case 31 -> new Image("/entities/sprites/blue_tcopter.png");
+            case 32 -> new Image("/entities/sprites/blue_bship.png");
+            case 33 -> new Image("/entities/sprites/blue_cruiser.png");
+            case 34 -> new Image("/entities/sprites/blue_lander.png");
+            case 35 -> new Image("/entities/sprites/blue_sub.png");
+            case 36 -> null; // No unit image
+            default -> throw new IllegalArgumentException("Unknown unit value: " + unitCode);
+        };
     }
 
     private String generateUnitID() {
