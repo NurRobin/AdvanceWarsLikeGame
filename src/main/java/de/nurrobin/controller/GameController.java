@@ -1,5 +1,7 @@
 package de.nurrobin.controller;
 
+import de.nurrobin.enums.MovementType;
+import de.nurrobin.enums.TerrainType;
 import de.nurrobin.model.Game;
 import de.nurrobin.model.GameMap;
 import de.nurrobin.model.Tile;
@@ -7,6 +9,7 @@ import de.nurrobin.model.Unit;
 import de.nurrobin.util.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
@@ -17,6 +20,12 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 public class GameController {
+    private List<int[]> directions = Arrays.asList(
+        new int[]{-1, 0}, // Up
+        new int[]{1, 0},  // Down
+        new int[]{0, -1}, // Left
+        new int[]{0, 1}   // Right
+    );
 
     private final Logger logger = new Logger(GameController.class);
     private final Random random = new Random();
@@ -94,9 +103,9 @@ public class GameController {
     }
 
     private void readyMovementLayer(Tile tile, int tileSize, StackPane tileStack) {
-        // This Layer is meant for semi-transparent tiles to show where the player can move a clicked unit but until then it's an empty layer
+        // This Layer is meant for semi-transparent tiles to show where the player can
+        // move a clicked unit but until then it's an empty layer
 
-        
     }
 
     private void renderBackgroundLayer(Tile tile, int tileSize, StackPane tileStack) {
@@ -137,29 +146,36 @@ public class GameController {
 
     private void visualizeMovementOptions() {
         if (selectedUnit != null) {
-            List<Tile> reachableTiles = calculateReachableTiles(selectedUnit);
-
-            // Get the position of the selected unit
-            int unitX = selectedUnit.getX();
-            int unitY = selectedUnit.getY();
-
-            int movementRadius = selectedUnit.getMovementRadius();
+            // Clear existing movement overlays
+            clearMovementOverlays();
+    
+            List<int[]> reachableTiles = calculateReachableTiles(selectedUnit);
+            
             int mapWidth = game.getMap().getWidth();
-
-            for (Tile tile : reachableTiles) {
-                int tileX = tile.getX();
-                int tileY = tile.getY();
-
+    
+            for (int[] tileCoords : reachableTiles) {
+                int tileX = tileCoords[0];
+                int tileY = tileCoords[1];
+    
                 // Calculate the position in the gameBoard pane
-                int offsetX = tileX - unitX;
-                int offsetY = tileY - unitY;
+                int index = tileY * mapWidth + tileX;
+                StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
+                renderMovementLayer(game.getMap().getTileAt(tileX, tileY), tileStack);
+            }
+        }
+    }
 
-                // Adjust tileStack position to center the movement range around the unit
-                int stackIndex = (unitY + offsetY) * mapWidth + (unitX + offsetX);
-                if (stackIndex >= 0 && stackIndex < gameBoard.getChildren().size()) {
-                    StackPane tileStack = (StackPane) gameBoard.getChildren().get(stackIndex);
-                    renderMovementLayer(tile, tileStack);
+    private void clearMovementOverlays() {
+        for (Node node : gameBoard.getChildren()) {
+            if (node instanceof StackPane) {
+                StackPane stackPane = (StackPane) node;
+                List<Node> overlaysToRemove = new ArrayList<>();
+                for (Node child : stackPane.getChildren()) {
+                    if (child instanceof Pane && child.getStyle().contains("rgba(0, 0, 255, 0.2)")) {
+                        overlaysToRemove.add(child);
+                    }
                 }
+                stackPane.getChildren().removeAll(overlaysToRemove);
             }
         }
     }
@@ -172,63 +188,57 @@ public class GameController {
         tileStack.getChildren().add(overlay);
     }
 
-    private List<Tile> calculateReachableTiles(Unit unit) {
-
-
-        List<Tile> reachableTiles = new ArrayList<>();
-        int movementRadius = unit.getMovementRadius();
+    public List<int[]> calculateReachableTiles(Unit unit) {
         int startX = unit.getX();
         int startY = unit.getY();
-
-        boolean[][] visited = new boolean[game.getMap().getHeight()][game.getMap().getWidth()];
-
+        int mapWidth = game.getMap().getWidth();
+        int mapHeight = game.getMap().getHeight();
+        boolean[][] visited = new boolean[mapWidth][mapHeight];
+        List<int[]> reachableTiles = new ArrayList<>();
         Queue<int[]> queue = new LinkedList<>();
-        queue.add(new int[]{startX, startY, 0});
-        visited[startY][startX] = true;
-        logger.logDebug(startX + " x  coordinaten Unit  y "+ startY);
+        int movementPoints = unit.getUnitType().getMovementRadius();
+        queue.add(new int[]{startX, startY, movementPoints});
 
         while (!queue.isEmpty()) {
             int[] current = queue.poll();
             int x = current[0];
             int y = current[1];
-            int distance = current[2];
+            int remainingMovementPoints = current[2];
 
-            //logger.logDebug(x + " x 0  current 1 y "+ y);
+            if (remainingMovementPoints < 0 || visited[x][y]) {
+                continue;
+            }
 
-            if (distance > movementRadius) continue;
+            visited[x][y] = true;
+            reachableTiles.add(new int[]{x, y});
 
-            //logger.logDebug("distance: " + distance + "> movementRadius" + movementRadius);
+            for (int[] direction : directions) {
+                int newX = x + direction[0];
+                int newY = y + direction[1];
 
-            reachableTiles.add(game.getMap().getTileAt(y, x));
-
-
-            int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-            for (int[] dir : directions) {
-                int newX = x + dir[0];
-                int newY = y + dir[1];
-
-                if (isValidPosition(newX, newY) && !visited[newY][newX]) {
-                    queue.add(new int[]{newX, newY, distance + 1});
-                    visited[newY][newX] = false;
-
-                    // Update position of units if needed
-                    Unit newUnit = game.getMap().getUnitAt(newY, newX);
-                    if (newUnit != null) {
-                        newUnit.setX(newX);
-                        newUnit.setY(newY);
+                if (isValidTile(newX, newY) && !visited[newX][newY]) {
+                    int cost = getMovementCost(unit, newX, newY);
+                    if (remainingMovementPoints - cost >= 0) {
+                        queue.add(new int[]{newX, newY, remainingMovementPoints - cost});
                     }
                 }
             }
-
         }
 
         return reachableTiles;
-
     }
 
-    private boolean isValidPosition(int x, int y) {
-        return x >= 0 && x < game.getMap().getWidth() &&
-                y >= 0 && y < game.getMap().getHeight();
+    private boolean isValidTile(int x, int y) {
+        // Checks if the tile is within map bounds
+        int mapWidth = game.getMap().getWidth();
+        int mapHeight = game.getMap().getHeight();
+        return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
     }
 
+    private int getMovementCost(Unit unit, int x, int y) {
+        // Calculates the movement cost based on the terrain type
+        TerrainType terrainType = game.getMap().getTileAt(x, y).getTerrain().getType();
+        MovementType movementType = unit.getMovementType();
+        return unit.getMovementCostForTerrainType(terrainType, movementType);
+    }
 }

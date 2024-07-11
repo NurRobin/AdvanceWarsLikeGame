@@ -1,7 +1,9 @@
 package de.nurrobin.model;
 
 import de.nurrobin.enums.MovementType;
+import de.nurrobin.enums.TerrainType;
 import de.nurrobin.enums.UnitType;
+import de.nurrobin.util.Logger;
 import de.nurrobin.persistor.UnitPersistor;
 import javafx.scene.image.Image;
 
@@ -12,6 +14,7 @@ import static de.nurrobin.enums.UnderlayingResourceType.TEXTURESFILE;
 import static de.nurrobin.util.ResourceURLBuilder.buildURL;
 
 public class Unit {
+    Logger logger = new Logger(Unit.class);
     private static final Map<Integer, UnitType> UNIT_TYPE_MAP = Map.ofEntries(
             Map.entry(0, UnitType.INFANTRY),
             Map.entry(1, UnitType.MECH_INFANTRY),
@@ -171,5 +174,17 @@ public class Unit {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getMovementCostForTerrainType(TerrainType terrainType, MovementType movementType) {
+        Map<MovementType, Integer> movementCosts = terrainType.getMovementCosts();
+        // logger.logDebug("Movement costs for terrain type " + terrainType + ": " + movementCosts);
+        Integer cost = movementCosts.get(movementType);
+        if (cost != null && cost != -1) {
+            return cost;
+        } else {
+            // Movement not possible for this unit on this terrain
+            return Integer.MAX_VALUE;
+        }
     }
 }

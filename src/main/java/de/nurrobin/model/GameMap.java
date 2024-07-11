@@ -183,13 +183,19 @@ public class GameMap {
     }
 
     public Tile getTileAt(int i, int j) {
-        // Return a new Tile object with the correct background and object images based on the terrain at position i, j
+        if (i < 0 || i >= tiles.length || j < 0 || j >= tiles[i].length) {
+            throw new IllegalArgumentException("Index out of bounds for getTileAt: i=" + i + ", j=" + j);
+        }
         int tileValue = tiles[i][j];
         return new Tile(tileValue);
     }
-
+    /*
+     * @param i The row index
+     * @param j The column index
+     * @return The unit at position i, j
+     * @description Return a new Unit object with the correct image based on the unit at position i, j
+     */
     public Unit getUnitAt(int i, int j) {
-        // Return a new Unit object with the correct image based on the unit at position i, j
         int unitValue = units[i][j];
         return new Unit(unitValue, i, j);
     }

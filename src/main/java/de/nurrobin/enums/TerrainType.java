@@ -11,7 +11,7 @@ public enum TerrainType {
     MOUNTAINS(4,
             Map.of(MovementType.FOOT, 2, MovementType.BOOTS, 1, MovementType.TREADS, -1, MovementType.TIRES, -1,
                     MovementType.AIR, 1, MovementType.SEA, -1, MovementType.LANDER, -1)),
-    SEA(0, Map.of(MovementType.FOOT, 0, MovementType.BOOTS, 0, MovementType.TREADS, 0, MovementType.TIRES, 0,
+    SEA(0, Map.of(MovementType.FOOT, -1, MovementType.BOOTS, -1, MovementType.TREADS, -1, MovementType.TIRES, -1,
             MovementType.AIR, 1, MovementType.SEA, 1, MovementType.LANDER, 1)),
     STREET(0,
             Map.of(MovementType.FOOT, 1, MovementType.BOOTS, 1, MovementType.TREADS, 1, MovementType.TIRES, 1,
@@ -69,6 +69,7 @@ public enum TerrainType {
 
     TerrainType(int defenseBonus, Map<MovementType, Integer> movementCosts) {
         this.defenseBonus = defenseBonus;
+        this.movementCosts = movementCosts;
     }
 
     public int getDefenseBonus() {
