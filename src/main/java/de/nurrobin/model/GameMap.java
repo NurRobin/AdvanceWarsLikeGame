@@ -15,6 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 
+/**
+ * Represents the game map, including its properties, tiles, and units.
+ */
 public class GameMap {
     private final Logger logger = new Logger(GameMap.class);
 
@@ -30,6 +33,14 @@ public class GameMap {
     private int[][] tiles;
     private int[][] units;
 
+    
+    /**
+     * Constructs a GameMap object by loading map data from a specified file.
+     *
+     * @param mapFileName The name of the map file to load.
+     * @throws IOException If an I/O error occurs.
+     * @throws URISyntaxException If the syntax of the URI is incorrect.
+     */
     public GameMap(String mapFileName) throws IOException, URISyntaxException {
         // Load map data from file in resources/maps/mapFileName.map
         mapFileName = mapFileName.replace(".map", "");
@@ -37,6 +48,13 @@ public class GameMap {
         loadMap(mapFilePath);
     }
 
+    /**
+     * Loads map data from the specified file path.
+     *
+     * @param mapFilePath The file path of the map to load.
+     * @throws IOException If an I/O error occurs.
+     * @throws URISyntaxException If the syntax of the URI is incorrect.
+     */
     private void loadMap(String mapFilePath) throws IOException, URISyntaxException {
         logger.logDebug("Loading map from file: " + mapFilePath);
         String content = Files.readString(Paths.get(GameMap.class.getResource(mapFilePath.toString()).toURI()));
@@ -65,6 +83,12 @@ public class GameMap {
         }
     }
 
+    /**
+     * Loads tile data from the specified file path.
+     *
+     * @param tilesFilePath The file path of the tiles data to load.
+     * @throws IOException If an I/O error occurs.
+     */
     private void loadTiles(String tilesFilePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(tilesFilePath))) {
             String line;
@@ -88,6 +112,12 @@ public class GameMap {
         }
     }
 
+    /**
+     * Loads unit data from the specified file path.
+     *
+     * @param unitsFilePath The file path of the units data to load.
+     * @throws IOException If an I/O error occurs.
+     */
     private void loadUnits(String unitsFilePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(unitsFilePath))) {
             String line;
@@ -130,6 +160,7 @@ public class GameMap {
             Map.entry("K", 20)
     );
 
+
     private int parseUnitValue(String unitValue) {
         Integer value = UNIT_MAP.get(unitValue);
         if (value == null) {
@@ -146,42 +177,95 @@ public class GameMap {
         return value;
     }
 
+    /**
+     * Gets the number of players in the game.
+     *
+     * @return The number of players.
+     */
     public int getPlayers() {
         return players;
     }
 
+    /**
+     * Gets the width of the game map.
+     *
+     * @return The width of the map.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Gets the height of the game map.
+     *
+     * @return The height of the map.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Checks if the map has a headquarters (HQ).
+     *
+     * @return True if the map has an HQ, false otherwise.
+     */
     public boolean hasHQ() {
         return hq;
     }
 
+    /**
+     * Checks if the map has cities.
+     *
+     * @return True if the map has cities, false otherwise.
+     */
     public boolean hasCities() {
         return cities;
     }
 
+    /**
+     * Checks if the map has bases.
+     *
+     * @return True if the map has bases, false otherwise.
+     */
     public boolean hasBases() {
         return bases;
     }
 
+    /**
+     * Checks if the map has airports.
+     *
+     * @return True if the map has airports, false otherwise.
+     */
     public boolean hasAirports() {
         return airports;
     }
 
+    /**
+     * Checks if the map has ports.
+     *
+     * @return True if the map has ports, false otherwise.
+     */
     public boolean hasPorts() {
         return ports;
     }
 
+    /**
+     * Gets the file name of the map's image.
+     *
+     * @return The file name of the map's image.
+     */
     public String getImageFile() {
         return imageFile;
     }
 
+    /**
+     * Gets the tile at the specified position.
+     *
+     * @param i The row index of the tile.
+     * @param j The column index of the tile.
+     * @return The tile at the specified position.
+     * @throws IllegalArgumentException If the index is out of bounds.
+     */
     public Tile getTileAt(int i, int j) {
         if (i < 0 || i >= tiles.length || j < 0 || j >= tiles[i].length) {
             throw new IllegalArgumentException("Index out of bounds for getTileAt: i=" + i + ", j=" + j);
