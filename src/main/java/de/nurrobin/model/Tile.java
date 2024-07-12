@@ -11,6 +11,9 @@ import static de.nurrobin.enums.ResourceType.*;
 import static de.nurrobin.enums.UnderlayingResourceType.*;
 import static de.nurrobin.util.ResourceURLBuilder.buildURL;
 
+/**
+ * Represents a tile on the game map, including its terrain, objects, and other properties.
+ */
 public class Tile {
     private static final Map<Integer, TerrainType> TERRAIN_TYPE_MAP = Map.ofEntries(
         Map.entry(0, TerrainType.PLAINS),
@@ -67,7 +70,13 @@ public class Tile {
     private final Map<MovementType, Integer> movementCosts;
     private int x;
     private int y;
-
+    
+    /**
+     * Constructs a Tile with a specific tile ID. Initializes the tile's terrain, background image,
+     * object image (if any), defense bonus, and movement costs based on the tile ID.
+     *
+     * @param tileID The unique identifier for the tile, determining its terrain and object.
+     */
     public Tile(int tileID) {
         this.tileID = tileID;
         this.hasObject = OBJECT_IMAGE_MAP.containsKey(tileID);
@@ -78,11 +87,23 @@ public class Tile {
         this.movementCosts = this.terrain.getType().getMovementCosts();
     }
 
+    /**
+     * Initializes the background image for the tile based on its ID.
+     *
+     * @param tileID The tile ID used to determine the background image.
+     * @return The initialized background image for the tile.
+     */
     private Image initBackgroundImage(int tileID) {
         String backgroundName = (tileID == 3 || tileID == 5) ? "sea" : "plain";
         return new Image(buildURL(TILE, TEXTURESFILE, backgroundName));
     }
 
+    /**
+     * Determines the resource type for the tile based on its ID.
+     *
+     * @param tileID The tile ID used to determine the resource type.
+     * @return The resource type of the tile.
+     */
     private ResourceType getResourceType(int tileID) {
         if (tileID >= 6 && tileID <= 20) {
             return BUILDING;
@@ -90,38 +111,84 @@ public class Tile {
         return TILE;
     }
 
+    /**
+     * Gets the tile ID.
+     *
+     * @return The tile ID.
+     */
     public int getTileID() {
         return tileID;
     }
 
+    
+    /**
+     * Gets the terrain of the tile.
+     *
+     * @return The terrain of the tile.
+     */
     public Terrain getTerrain() {
         return terrain;
     }
 
+    /**
+     * Checks if the tile has an object.
+     *
+     * @return True if the tile has an object, false otherwise.
+     */
     public boolean hasObject() {
         return hasObject;
     }
 
+    /**
+     * Gets the background image of the tile.
+     *
+     * @return The background image of the tile.
+     */
     public Image getBackgroundImage() {
         return backgroundImage;
     }
 
+    /**
+     * Gets the object image of the tile, if any.
+     *
+     * @return The object image of the tile, or null if there is no object.
+     */
     public Image getObjectImage() {
         return objectImage;
     }
 
+    /**
+     * Gets the defense bonus provided by the tile.
+     *
+     * @return The defense bonus.
+     */
     public int getDefenseBonus() {
         return defenseBonus;
     }
 
+    /**
+     * Gets the movement costs for moving through the tile, based on movement type.
+     *
+     * @return A map of movement types to their respective movement costs.
+     */
     public Map<MovementType, Integer> getMovementCosts() {
         return movementCosts;
     }
 
+    /**
+     * Gets the x-coordinate of the tile on the game map.
+     *
+     * @return The x-coordinate.
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Gets the y-coordinate of the tile on the game map.
+     *
+     * @return The y-coordinate.
+     */
     public int getY() {
         return y;
     }
