@@ -13,6 +13,9 @@ import static de.nurrobin.enums.ResourceType.ENTITY;
 import static de.nurrobin.enums.UnderlayingResourceType.TEXTURESFILE;
 import static de.nurrobin.util.ResourceURLBuilder.buildURL;
 
+/**
+ * Represents a unit in the game, including its type, player ownership, and graphical representation.
+ */
 public class Unit {
     Logger logger = new Logger(Unit.class);
     private static final Map<Integer, UnitType> UNIT_TYPE_MAP = Map.ofEntries(
@@ -72,6 +75,14 @@ public class Unit {
     private int y;
     UnitPersistor unitPersistor = new UnitPersistor();
 
+    /**
+     * Constructs a Unit with a specific unit code and position. Initializes the unit's type,
+     * player ID, images, movement type, and movement radius. Adds the unit to the persistor.
+     *
+     * @param unitCode The code representing the unit type and player ownership.
+     * @param x The x-coordinate of the unit's position.
+     * @param y The y-coordinate of the unit's position.
+     */
     public Unit(int unitCode, int x, int y) {
         this.unitCode = unitCode;
         this.x = x;
@@ -97,12 +108,25 @@ public class Unit {
         unitPersistor.addUnit(this);
     }
 
+    /**
+     * Determines the player ID based on the unit code.
+     *
+     * @param unitCode The code representing the unit type and player ownership.
+     * @return The player ID associated with the unit.
+     */
     private int determinePlayerID(int unitCode) {
         if (unitCode < 18) return 1;
         if (unitCode >= 18 && unitCode <= 35) return 2;
         return 0; // No player
     }
 
+    /**
+     * Loads the image for the unit based on its code and whether a big image is requested.
+     *
+     * @param unitCode The code representing the unit type.
+     * @param isBig Indicates whether the big version of the image should be loaded.
+     * @return The loaded image for the unit.
+     */
     private Image loadImage(int unitCode, boolean isBig) {
         if (unitCode == 36) return null; // No unit image
         int index = unitCode % 18;
@@ -112,6 +136,11 @@ public class Unit {
         return new Image(buildURL(ENTITY, TEXTURESFILE, color + "_" + imageName + size));
     }
 
+    /**
+     * Generates a unique unit ID using the unit type and current time.
+     *
+     * @return A unique unit ID.
+     */
     private String generateUnitID() {
         String unitIDString = unitType + "_" + System.currentTimeMillis();
         while (!unitPersistor.isUnitIDAvailable(unitIDString)) {
@@ -176,6 +205,13 @@ public class Unit {
         this.y = y;
     }
 
+    /**
+     * Calculates the movement cost for the unit to move over a specified terrain type.
+     *
+     * @param terrainType The type of terrain the unit wants to move over.
+     * @param movementType The movement type of the unit.
+     * @return The movement cost for the unit to move over the specified terrain type.
+     */
     public int getMovementCostForTerrainType(TerrainType terrainType, MovementType movementType) {
         Map<MovementType, Integer> movementCosts = terrainType.getMovementCosts();
         // logger.logDebug("Movement costs for terrain type " + terrainType + ": " + movementCosts);
