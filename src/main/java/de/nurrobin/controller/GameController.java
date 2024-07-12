@@ -41,6 +41,13 @@ public class GameController {
 
     private Game game;
 
+    /**
+     * Initializes the game controller and loads a random map to start the game.
+     * This method is automatically called after the FXML fields have been injected.
+     *
+     * @throws FileNotFoundException If the maps directory does not exist or is empty.
+     * @throws URISyntaxException If the URI syntax is incorrect.
+     */
     @FXML
     public void initialize() throws FileNotFoundException, URISyntaxException {
         final String randomMapName = getRandomMapName();
@@ -53,6 +60,12 @@ public class GameController {
         }
     }
 
+    /**
+     * Selects a random map name from the available map files in the /maps directory.
+     *
+     * @return The name of the randomly selected map file.
+     * @throws FileNotFoundException If no map files are found in the maps directory.
+     */
     private String getRandomMapName() throws FileNotFoundException {
         File mapsDirectory = new File(Objects.requireNonNull(getClass().getResource("/maps")).getFile());
         File[] mapFiles = mapsDirectory.listFiles((dir, name) -> name.endsWith(".map"));
@@ -64,6 +77,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Renders the game board by creating visual representations of tiles, objects, and units.
+     */
     private void renderGameBoard() {
         GameMap map = game.getMap();
         int tileSize = 32;
@@ -74,6 +90,15 @@ public class GameController {
         logger.logDebug("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
     }
 
+    /**
+     * The main loop for rendering the game board. It iterates through each tile and renders
+     * the background, objects, movement options, and units.
+     *
+     * @param height The height of the game map in tiles.
+     * @param width The width of the game map in tiles.
+     * @param tileSize The size of each tile in pixels.
+     * @param map The game map to render.
+     */
     private void renderLoop(int height, int width, int tileSize, GameMap map) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -102,12 +127,27 @@ public class GameController {
         }
     }
 
+    /**
+     * Prepares the movement layer for rendering. This layer is intended to show possible movement
+     * paths for selected units.
+     *
+     * @param tile The current tile being processed.
+     * @param tileSize The size of the tile in pixels.
+     * @param tileStack The stack pane representing the current tile.
+     */
     private void readyMovementLayer(Tile tile, int tileSize, StackPane tileStack) {
         // This Layer is meant for semi-transparent tiles to show where the player can
         // move a clicked unit but until then it's an empty layer
-
+        //TODO: Implement this method
     }
 
+    /**
+     * Renders the background layer of a tile. This includes the base terrain of the tile.
+     *
+     * @param tile The tile to render the background for.
+     * @param tileSize The size of the tile in pixels.
+     * @param tileStack The stack pane representing the current tile.
+     */
     private void renderBackgroundLayer(Tile tile, int tileSize, StackPane tileStack) {
         ImageView background = new ImageView(tile.getBackgroundImage());
         tileCount++;
@@ -116,6 +156,14 @@ public class GameController {
         tileStack.getChildren().add(background);
     }
 
+    /**
+     * Renders the object layer of a tile. This includes any objects that are present on the tile,
+     * such as trees or buildings.
+     *
+     * @param tile The tile to render objects for.
+     * @param tileSize The size of the tile in pixels.
+     * @param tileStack The stack pane representing the current tile.
+     */
     private void renderObjectLayer(Tile tile, int tileSize, StackPane tileStack) {
         if (tile.hasObject()) {
             ImageView object = new ImageView(tile.getObjectImage());
@@ -126,6 +174,14 @@ public class GameController {
         }
     }
 
+    /**
+     * Renders the sprite layer of a tile, which includes units. This method also sets up
+     * event handlers for clicking on units.
+     *
+     * @param unit The unit to render.
+     * @param tileSize The size of the tile in pixels.
+     * @param tileStack The stack pane representing the current tile.
+     */
     private void renderSpriteLayer(Unit unit, int tileSize, StackPane tileStack) {
         if (unit.getUnitCode() != 36) {
             ImageView unitImage = new ImageView(unit.getImage());
@@ -138,12 +194,21 @@ public class GameController {
         }
     }
 
+    /**
+     * Handles the event when a unit is clicked. Sets the selected unit and visualizes
+     * movement options for that unit.
+     *
+     * @param unit The unit that was clicked.
+     */
     private void onUnitClicked(Unit unit) {
         logger.logDebug("Unit clicked: " + unit.getUnitID());
         selectedUnit = unit;
         visualizeMovementOptions();
     }
 
+    /**
+     * Visualizes the movement options for the selected unit by highlighting reachable tiles.
+     */
     private void visualizeMovementOptions() {
         if (selectedUnit != null) {
             // Clear existing movement overlays
@@ -165,6 +230,9 @@ public class GameController {
         }
     }
 
+    /**
+     * Clears any existing movement overlays from the game board.
+     */
     private void clearMovementOverlays() {
         for (Node node : gameBoard.getChildren()) {
             if (node instanceof StackPane) {
@@ -180,6 +248,13 @@ public class GameController {
         }
     }
 
+    /**
+     * Renders a semi-transparent overlay on a tile to indicate it is within the movement range
+     * of the selected unit.
+     *
+     * @param tile The tile to render the movement overlay for.
+     * @param tileStack The stack pane representing the current tile.
+     */
     private void renderMovementLayer(Tile tile, StackPane tileStack) {
         // Create a semi-transparent overlay to show reachable tiles
         Pane overlay = new Pane();
@@ -188,6 +263,13 @@ public class GameController {
         tileStack.getChildren().add(overlay);
     }
 
+    /**
+     * Calculates the tiles that are reachable by the selected unit based on its movement points
+     * and the terrain of the tiles.
+     *
+     * @param unit The unit for which to calculate reachable tiles.
+     * @return A list of coordinates (int arrays) of the reachable tiles.
+     */
     public List<int[]> calculateReachableTiles(Unit unit) {
         int startX = unit.getX();
         int startY = unit.getY();
@@ -228,6 +310,13 @@ public class GameController {
         return reachableTiles;
     }
 
+    /**
+     * Checks if a given tile coordinate is valid and within the bounds of the game map.
+     *
+     * @param x The x-coordinate of the tile.
+     * @param y The y-coordinate of the tile.
+     * @return True if the tile is within bounds, false otherwise.
+     */
     private boolean isValidTile(int x, int y) {
         // Checks if the tile is within map bounds
         int mapWidth = game.getMap().getWidth();
@@ -235,6 +324,15 @@ public class GameController {
         return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
     }
 
+    /**
+     * Calculates the movement cost for a unit to move onto a tile based on the unit's movement
+     * type and the terrain type of the tile.
+     *
+     * @param unit The unit moving onto the tile.
+     * @param x The x-coordinate of the tile.
+     * @param y The y-coordinate of the tile.
+     * @return The movement cost for the unit to move onto the tile.
+     */
     private int getMovementCost(Unit unit, int x, int y) {
         // Calculates the movement cost based on the terrain type
         TerrainType terrainType = game.getMap().getTileAt(x, y).getTerrain().getType();
