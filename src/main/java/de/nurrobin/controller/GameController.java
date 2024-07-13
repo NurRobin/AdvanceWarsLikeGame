@@ -7,6 +7,7 @@ import de.nurrobin.model.GameMap;
 import de.nurrobin.model.Tile;
 import de.nurrobin.model.Unit;
 import de.nurrobin.persistor.TilePersistor;
+import de.nurrobin.persistor.UnitPersistor;
 import de.nurrobin.util.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
@@ -31,6 +32,7 @@ public class GameController {
     private final Logger logger = new Logger(GameController.class);
     private final Random random = new Random();
 
+    private int tileindex = 0;
     private int tileCount = 0;
     private int objectCount;
     private int unitCount;
@@ -42,7 +44,8 @@ public class GameController {
 
     private Game game;
 
-    TilePersistor tilepersistor = new TilePersistor();
+    TilePersistor tilepersistor = TilePersistor.getInstance();
+    UnitPersistor unitPersistor = UnitPersistor.getInstance();
 
     /**
      * Initializes the game controller and loads a random map to start the game.
@@ -90,7 +93,9 @@ public class GameController {
         int height = map.getHeight();
 
         renderLoop(height, width, tileSize, map);
-        logger.logDebug("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
+        logger.logInfo("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
+        logger.logDebug("UnitPersistor size: " + unitPersistor.getUnits().size());
+        logger.logDebug("TilePersistor size: " + tilepersistor.getTiles().size());
     }
 
     /**
@@ -108,8 +113,9 @@ public class GameController {
                 StackPane tileStack = new StackPane();
                 tileStack.setPrefSize(tileSize, tileSize);
 
-                Tile tile = map.createTileAt(x, y);
-                Unit unit = map.createUnitAt(x, y);
+                Tile tile = map.createTileAt(x, y, tileindex);
+                Unit unit = map.createUnitAt(x, y, tileindex);
+                tileindex++;
 
                 // Layer 0: Background layer -> only plains or sea tiles
                 renderBackgroundLayer(tile, tileSize, tileStack);
@@ -138,10 +144,8 @@ public class GameController {
         ImageView background = new ImageView(tile.getBackgroundImage());
         background.setFitWidth(tileSize);
         background.setFitHeight(tileSize);
-        tileStack.getChildren().add(background);
-        tile.setIndex(tileCount);
-        //logger.logDebug("Assigning Tile " + tileCount + " at (" + tile.getX() + ", " + tile.getY() + ")");
         tileCount++;
+        tileStack.getChildren().add(background);
     }
 
     /**
@@ -157,8 +161,8 @@ public class GameController {
             ImageView object = new ImageView(tile.getObjectImage());
             object.setFitWidth(tileSize);
             object.setFitHeight(tileSize);
-            tileStack.getChildren().add(object);
             objectCount++;
+            tileStack.getChildren().add(object);
         }
     }
 
@@ -289,7 +293,7 @@ public class GameController {
                 int newX = x + direction[0];
                 int newY = y + direction[1];
 
-                if (isValidTile(newX, newY) && !visited[newX][newY]) {
+                if (isValidTile(newX, newY) && !visited[newX][newY] && !doesTileHaveUnit(newX, newY)) {
                     int cost = getMovementCost(unit, newX, newY);
                     if (remainingMovementPoints - cost >= 0) {
                         queue.add(new int[]{newX, newY, remainingMovementPoints - cost});
@@ -299,6 +303,15 @@ public class GameController {
         }
 
         return reachableTiles;
+    }
+
+    private boolean doesTileHaveUnit(int x, int y) {
+        Unit unit = unitPersistor.getUnitAtPosition(x, y);
+        if (unit == null) {
+            return false;
+        }
+        logger.logDebug("Unit at position: " + unit.getUnitID());
+        return true;
     }
 
     /**

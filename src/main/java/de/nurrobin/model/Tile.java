@@ -73,8 +73,8 @@ public class Tile {
     private final Map<MovementType, Integer> movementCosts;
     private final int x;
     private final int y;
-    private int index;
-    TilePersistor tilepersistor = new TilePersistor();
+    private final int index;
+    TilePersistor tilepersistor = TilePersistor.getInstance();
     
     /**
      * Constructs a Tile with a specific tile ID. Initializes the tile's terrain, background image,
@@ -82,7 +82,7 @@ public class Tile {
      *
      * @param tileCode The unique identifier for the tile, determining its terrain and object.
      */
-    public Tile(int tileCode, int x, int y) {
+    public Tile(int tileCode, int x, int y, int index) {
         this.tileCode = tileCode;
         this.hasObject = OBJECT_IMAGE_MAP.containsKey(tileCode);
         this.backgroundImage = initBackgroundImage(tileCode);
@@ -93,6 +93,7 @@ public class Tile {
         this.x = x;
         this.y = y;
         this.tileID = generateTileID();
+        this.index = index;
         tilepersistor.addTile(this);
     }
 
@@ -222,16 +223,6 @@ public class Tile {
      */
     public int getIndex() {
         return index;
-    }
-
-    /**
-     * Sets the index of the tile in the game map's tile list.
-     *
-     * @param index The index of the tile.
-     */
-    public void setIndex(int index) {
-        this.index = index;
-        tilepersistor.updateTile(this);
     }
 
     /**

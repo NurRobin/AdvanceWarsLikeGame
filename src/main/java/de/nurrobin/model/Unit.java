@@ -73,7 +73,8 @@ public class Unit {
     private final int movementRadius;
     private int x;
     private int y;
-    UnitPersistor unitPersistor = new UnitPersistor();
+    private int index;
+    UnitPersistor unitPersistor = UnitPersistor.getInstance();
 
     /**
      * Constructs a Unit with a specific unit code and position. Initializes the unit's type,
@@ -83,7 +84,7 @@ public class Unit {
      * @param x The x-coordinate of the unit's position.
      * @param y The y-coordinate of the unit's position.
      */
-    public Unit(int unitCode, int x, int y) {
+    public Unit(int unitCode, int x, int y, int index) {
         this.unitCode = unitCode;
         this.x = x;
         this.y = y;
@@ -105,6 +106,7 @@ public class Unit {
         this.unitID = generateUnitID();
         this.movementType = unitType.getMovementType();
         this.movementRadius = unitType.getMovementRadius();
+        this.index = index;
         unitPersistor.addUnit(this);
     }
 
@@ -204,6 +206,15 @@ public class Unit {
 
     public void setY(int y) {
         this.y = y;
+        unitPersistor.updateUnit(this);
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
         unitPersistor.updateUnit(this);
     }
 
