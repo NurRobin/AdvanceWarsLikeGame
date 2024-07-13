@@ -6,6 +6,7 @@ import de.nurrobin.model.Game;
 import de.nurrobin.model.GameMap;
 import de.nurrobin.model.Tile;
 import de.nurrobin.model.Unit;
+import de.nurrobin.persistor.TilePersistor;
 import de.nurrobin.util.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
@@ -40,6 +41,8 @@ public class GameController {
     private Pane gameBoard;
 
     private Game game;
+
+    TilePersistor tilepersistor = new TilePersistor();
 
     /**
      * Initializes the game controller and loads a random map to start the game.
@@ -105,12 +108,8 @@ public class GameController {
                 StackPane tileStack = new StackPane();
                 tileStack.setPrefSize(tileSize, tileSize);
 
-                Tile tile = map.getTileAt(x, y);
-                tile.setX(x);
-                tile.setY(y);
-                Unit unit = map.getUnitAt(x, y);
-                unit.setX(x);
-                unit.setY(y);
+                Tile tile = map.createTileAt(x, y);
+                Unit unit = map.createUnitAt(x, y);
 
                 // Layer 0: Background layer -> only plains or sea tiles
                 renderBackgroundLayer(tile, tileSize, tileStack);
@@ -141,7 +140,7 @@ public class GameController {
         background.setFitHeight(tileSize);
         tileStack.getChildren().add(background);
         tile.setIndex(tileCount);
-        logger.logDebug("Tile " + tileCount + " at (" + tile.getX() + ", " + tile.getY() + ")");
+        //logger.logDebug("Assigning Tile " + tileCount + " at (" + tile.getX() + ", " + tile.getY() + ")");
         tileCount++;
     }
 
@@ -210,16 +209,14 @@ public class GameController {
                 int tileY = tileCoords[1];
                 
                 
-                if (game.getMap().getTileAt(tileX, tileY) == null) {
-                    // Skip if the tile is out of bounds
+                if (tilepersistor.getTileAtPosition(tileX, tileY) == null) {
                     continue;
                 }
                 // Calculate the position in the gameBoard pane
-                Tile tile = game.getMap().getTileAt(tileX, tileY);
-                logger.logDebug("visualizeMovementOptions got tileX: " + tileX + " tileY: " + tileY + "\nWhile tile is at: TileX" + tile.getX() + " TileY: " + tile.getY());
+                Tile tile = tilepersistor.getTileAtPosition(tileX, tileY);
                 int index = tile.getIndex();
                 StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
-                renderMovementLayer(game.getMap().getTileAt(tileX, tileY), tileStack);
+                renderMovementLayer(tilepersistor.getTileAtPosition(tileX, tileY), tileStack);
             }
         }
     }
@@ -329,7 +326,7 @@ public class GameController {
      */
     private int getMovementCost(Unit unit, int x, int y) {
         // Calculates the movement cost based on the terrain type
-        TerrainType terrainType = game.getMap().getTileAt(x, y).getTerrain().getType();
+        TerrainType terrainType = tilepersistor.getTileAtPosition(x, y).getTerrain().getType();
         if (terrainType == null) {
             return 0;
         }

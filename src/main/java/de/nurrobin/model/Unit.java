@@ -195,6 +195,7 @@ public class Unit {
 
     public void setX(int x) {
         this.x = x;
+        unitPersistor.updateUnit(this);
     }
 
     public int getY() {
@@ -203,6 +204,7 @@ public class Unit {
 
     public void setY(int y) {
         this.y = y;
+        unitPersistor.updateUnit(this);
     }
 
     /**

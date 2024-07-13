@@ -105,6 +105,7 @@ public class GameMap {
                     this.tiles[y] = new int[tileValues.length];
                     for (int x = 0; x < tileValues.length; x++) {
                         this.tiles[y][x] = parseTileValue(tileValues[x]);
+                        new Tile(this.tiles[y][x], x, y);
                     }
                     y++;
                 }
@@ -265,12 +266,13 @@ public class GameMap {
      * @param x The column index of the tile.
      * @return The tile at the specified position.
      */
-    public Tile getTileAt(int x, int y) {
+    public Tile createTileAt(int x, int y) {
         if (y < 0 || y >= tiles.length || x < 0 || x >= tiles[y].length) {
             return null;
         }
         int tileValue = tiles[y][x];
-        return new Tile(tileValue);
+        logger.logDebug("Creating tile at position (" + x + ", " + y + ") with value: " + tileValue);
+        return new Tile(tileValue, x, y);
     }
 
     /**
@@ -280,8 +282,11 @@ public class GameMap {
     * @param x The column index
     * @return The unit at position i, j
     */
-    public Unit getUnitAt(int x, int y) {
+    public Unit createUnitAt(int x, int y) {
         int unitValue = units[y][x];
-        return new Unit(unitValue, y, x);
+        if (unitValue != 36) {
+            logger.logDebug("Creating unit at position (" + x + ", " + y + ") with value: " + unitValue);
+        }
+        return new Unit(unitValue, x, y);
     }
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import de.nurrobin.enums.MovementType;
 import de.nurrobin.enums.ResourceType;
 import de.nurrobin.enums.TerrainType;
+import de.nurrobin.persistor.TilePersistor;
 import javafx.scene.image.Image;
 
 import static de.nurrobin.enums.ResourceType.*;
@@ -14,6 +15,7 @@ import static de.nurrobin.util.ResourceURLBuilder.buildURL;
 /**
  * Represents a tile on the game map, including its terrain, objects, and other properties.
  */
+
 public class Tile {
     private static final Map<Integer, TerrainType> TERRAIN_TYPE_MAP = Map.ofEntries(
         Map.entry(0, TerrainType.PLAINS),
@@ -60,7 +62,8 @@ public class Tile {
         Map.entry(20, "Port-Neutral")
     );
 
-    private final int tileID;
+    private final int tileCode;
+    private final String tileID;
     private final Terrain terrain;
     private final boolean hasObject;
     private final Image backgroundImage;
@@ -68,24 +71,42 @@ public class Tile {
 
     private final int defenseBonus;
     private final Map<MovementType, Integer> movementCosts;
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
     private int index;
+    TilePersistor tilepersistor = new TilePersistor();
     
     /**
      * Constructs a Tile with a specific tile ID. Initializes the tile's terrain, background image,
      * object image (if any), defense bonus, and movement costs based on the tile ID.
      *
-     * @param tileID The unique identifier for the tile, determining its terrain and object.
+     * @param tileCode The unique identifier for the tile, determining its terrain and object.
      */
-    public Tile(int tileID) {
-        this.tileID = tileID;
-        this.hasObject = OBJECT_IMAGE_MAP.containsKey(tileID);
-        this.backgroundImage = initBackgroundImage(tileID);
-        this.terrain = new Terrain(TERRAIN_TYPE_MAP.getOrDefault(tileID, TerrainType.PLAINS));
-        this.objectImage = hasObject ? new Image(buildURL(getResourceType(tileID), TEXTURESFILE, OBJECT_IMAGE_MAP.get(tileID))) : null;
+    public Tile(int tileCode, int x, int y) {
+        this.tileCode = tileCode;
+        this.hasObject = OBJECT_IMAGE_MAP.containsKey(tileCode);
+        this.backgroundImage = initBackgroundImage(tileCode);
+        this.terrain = new Terrain(TERRAIN_TYPE_MAP.getOrDefault(tileCode, TerrainType.PLAINS));
+        this.objectImage = hasObject ? new Image(buildURL(getResourceType(tileCode), TEXTURESFILE, OBJECT_IMAGE_MAP.get(tileCode))) : null;
         this.defenseBonus = this.terrain.getType().getDefenseBonus();
         this.movementCosts = this.terrain.getType().getMovementCosts();
+        this.x = x;
+        this.y = y;
+        this.tileID = generateTileID();
+        tilepersistor.addTile(this);
+    }
+
+    /**
+     * Generates a unique tile ID using the tile type and current time.
+     *
+     * @return A unique tile ID.
+     */
+    private String generateTileID() {
+        String tileIDString = terrain + "_" + System.currentTimeMillis();
+        while (!TilePersistor.isTileIDAvailable(tileIDString)) {
+            tileIDString = terrain + "_" + System.currentTimeMillis();
+        }
+        return tileIDString;
     }
 
     /**
@@ -117,8 +138,8 @@ public class Tile {
      *
      * @return The tile ID.
      */
-    public int getTileID() {
-        return tileID;
+    public int getTileCode() {
+        return tileCode;
     }
 
     
@@ -210,24 +231,16 @@ public class Tile {
      */
     public void setIndex(int index) {
         this.index = index;
+        tilepersistor.updateTile(this);
     }
 
     /**
-     * Sets the x-coordinate of the tile on the game map.
+     * Gets the tile ID.
      *
-     * @param x The x-coordinate.
+     * @return The tile ID.
      */
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    /**
-     * Sets the y-coordinate of the tile on the game map.
-     *
-     * @param y The y-coordinate.
-     */
-    public void setY(int y) {
-        this.y = y;
+    public String getTileID() {
+        return tileID;
     }
 
 }

@@ -44,4 +44,13 @@ public class UnitPersistor {
             }
         }
     }
+
+    public Unit getUnitAtPosition(int x, int y) {
+        for (Unit unit : units) {
+            if (unit.getX() == x && unit.getY() == y) {
+                return unit;
+            }
+        }
+        return null;
+    }
 }
