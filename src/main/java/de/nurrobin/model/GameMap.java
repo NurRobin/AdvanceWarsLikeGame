@@ -99,14 +99,14 @@ public class GameMap {
             this.tiles = new int[rows][];
 
             try (BufferedReader br2 = new BufferedReader(new FileReader(tilesFilePath))) {
-                int i = 0;
+                int y = 0;
                 while ((line = br2.readLine()) != null) {
                     String[] tileValues = line.split(" ");
-                    this.tiles[i] = new int[tileValues.length];
-                    for (int j = 0; j < tileValues.length; j++) {
-                        this.tiles[i][j] = parseTileValue(tileValues[j]);
+                    this.tiles[y] = new int[tileValues.length];
+                    for (int x = 0; x < tileValues.length; x++) {
+                        this.tiles[y][x] = parseTileValue(tileValues[x]);
                     }
-                    i++;
+                    y++;
                 }
             }
         }
@@ -128,14 +128,14 @@ public class GameMap {
             this.units = new int[rows][];
 
             try (BufferedReader br2 = new BufferedReader(new FileReader(unitsFilePath))) {
-                int i = 0;
+                int y = 0;
                 while ((line = br2.readLine()) != null) {
                     String[] unitValues = line.split(" ");
-                    this.units[i] = new int[unitValues.length];
-                    for (int j = 0; j < unitValues.length; j++) {
-                        this.units[i][j] = parseUnitValue(unitValues[j]);
+                    this.units[y] = new int[unitValues.length];
+                    for (int x = 0; x < unitValues.length; x++) {
+                        this.units[y][x] = parseUnitValue(unitValues[x]);
                     }
-                    i++;
+                    y++;
                 }
             }
         }
@@ -261,26 +261,27 @@ public class GameMap {
     /**
      * Gets the tile at the specified position.
      *
-     * @param i The row index of the tile.
-     * @param j The column index of the tile.
+     * @param y The row index of the tile.
+     * @param x The column index of the tile.
      * @return The tile at the specified position.
-     * @throws IllegalArgumentException If the index is out of bounds.
      */
-    public Tile getTileAt(int i, int j) {
-        if (i < 0 || i >= tiles.length || j < 0 || j >= tiles[i].length) {
-            throw new IllegalArgumentException("Index out of bounds for getTileAt: i=" + i + ", j=" + j);
+    public Tile getTileAt(int x, int y) {
+        if (y < 0 || y >= tiles.length || x < 0 || x >= tiles[y].length) {
+            return null;
         }
-        int tileValue = tiles[i][j];
+        int tileValue = tiles[y][x];
         return new Tile(tileValue);
     }
-    /*
-     * @param i The row index
-     * @param j The column index
-     * @return The unit at position i, j
-     * @description Return a new Unit object with the correct image based on the unit at position i, j
-     */
-    public Unit getUnitAt(int i, int j) {
-        int unitValue = units[i][j];
-        return new Unit(unitValue, i, j);
+
+    /**
+    * Gets the unit at the specified position.
+    *
+    * @param y The row index
+    * @param x The column index
+    * @return The unit at position i, j
+    */
+    public Unit getUnitAt(int x, int y) {
+        int unitValue = units[y][x];
+        return new Unit(unitValue, y, x);
     }
 }

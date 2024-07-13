@@ -30,7 +30,7 @@ public class GameController {
     private final Logger logger = new Logger(GameController.class);
     private final Random random = new Random();
 
-    private int tileCount;
+    private int tileCount = 0;
     private int objectCount;
     private int unitCount;
 
@@ -100,13 +100,17 @@ public class GameController {
      * @param map The game map to render.
      */
     private void renderLoop(int height, int width, int tileSize, GameMap map) {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 StackPane tileStack = new StackPane();
                 tileStack.setPrefSize(tileSize, tileSize);
 
-                Tile tile = map.getTileAt(i, j);
-                Unit unit = map.getUnitAt(i, j);
+                Tile tile = map.getTileAt(x, y);
+                tile.setX(x);
+                tile.setY(y);
+                Unit unit = map.getUnitAt(x, y);
+                unit.setX(x);
+                unit.setY(y);
 
                 // Layer 0: Background layer -> only plains or sea tiles
                 renderBackgroundLayer(tile, tileSize, tileStack);
@@ -114,31 +118,14 @@ public class GameController {
                 // Layer 1: Object layer
                 renderObjectLayer(tile, tileSize, tileStack);
 
-                // Layer 2: Movement layer -> pathfinding
-                readyMovementLayer(tile, tileSize, tileStack);
-
                 // Layer 3: Interactive layer -> units
                 renderSpriteLayer(unit, tileSize, tileStack);
 
-                tileStack.setLayoutX(j * tileSize);
-                tileStack.setLayoutY(i * tileSize);
+                tileStack.setLayoutX(x * tileSize);
+                tileStack.setLayoutY(y * tileSize);
                 gameBoard.getChildren().add(tileStack);
             }
         }
-    }
-
-    /**
-     * Prepares the movement layer for rendering. This layer is intended to show possible movement
-     * paths for selected units.
-     *
-     * @param tile The current tile being processed.
-     * @param tileSize The size of the tile in pixels.
-     * @param tileStack The stack pane representing the current tile.
-     */
-    private void readyMovementLayer(Tile tile, int tileSize, StackPane tileStack) {
-        // This Layer is meant for semi-transparent tiles to show where the player can
-        // move a clicked unit but until then it's an empty layer
-        //TODO: Implement this method
     }
 
     /**
@@ -150,10 +137,12 @@ public class GameController {
      */
     private void renderBackgroundLayer(Tile tile, int tileSize, StackPane tileStack) {
         ImageView background = new ImageView(tile.getBackgroundImage());
-        tileCount++;
         background.setFitWidth(tileSize);
         background.setFitHeight(tileSize);
         tileStack.getChildren().add(background);
+        tile.setIndex(tileCount);
+        logger.logDebug("Tile " + tileCount + " at (" + tile.getX() + ", " + tile.getY() + ")");
+        tileCount++;
     }
 
     /**
@@ -167,10 +156,10 @@ public class GameController {
     private void renderObjectLayer(Tile tile, int tileSize, StackPane tileStack) {
         if (tile.hasObject()) {
             ImageView object = new ImageView(tile.getObjectImage());
-            objectCount++;
             object.setFitWidth(tileSize);
             object.setFitHeight(tileSize);
             tileStack.getChildren().add(object);
+            objectCount++;
         }
     }
 
@@ -185,10 +174,10 @@ public class GameController {
     private void renderSpriteLayer(Unit unit, int tileSize, StackPane tileStack) {
         if (unit.getUnitCode() != 36) {
             ImageView unitImage = new ImageView(unit.getImage());
-            unitCount++;
             unitImage.setFitWidth(tileSize);
             unitImage.setFitHeight(tileSize);
             tileStack.getChildren().add(unitImage);
+            unitCount++;
             // Event-Handler für das Klicken auf Einheiten
             unitImage.setOnMouseClicked(event -> onUnitClicked(unit));
         }
@@ -215,15 +204,20 @@ public class GameController {
             clearMovementOverlays();
     
             List<int[]> reachableTiles = calculateReachableTiles(selectedUnit);
-            
-            int mapWidth = game.getMap().getWidth();
     
             for (int[] tileCoords : reachableTiles) {
                 int tileX = tileCoords[0];
                 int tileY = tileCoords[1];
-    
+                
+                
+                if (game.getMap().getTileAt(tileX, tileY) == null) {
+                    // Skip if the tile is out of bounds
+                    continue;
+                }
                 // Calculate the position in the gameBoard pane
-                int index = tileY * mapWidth + tileX;
+                Tile tile = game.getMap().getTileAt(tileX, tileY);
+                logger.logDebug("visualizeMovementOptions got tileX: " + tileX + " tileY: " + tileY + "\nWhile tile is at: TileX" + tile.getX() + " TileY: " + tile.getY());
+                int index = tile.getIndex();
                 StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
                 renderMovementLayer(game.getMap().getTileAt(tileX, tileY), tileStack);
             }
@@ -239,7 +233,7 @@ public class GameController {
                 StackPane stackPane = (StackPane) node;
                 List<Node> overlaysToRemove = new ArrayList<>();
                 for (Node child : stackPane.getChildren()) {
-                    if (child instanceof Pane && child.getStyle().contains("rgba(0, 0, 255, 0.2)")) {
+                    if (child instanceof Pane && child.getStyle().contains("rgba(0, 0, 255, 0.3)")) {
                         overlaysToRemove.add(child);
                     }
                 }
@@ -258,7 +252,7 @@ public class GameController {
     private void renderMovementLayer(Tile tile, StackPane tileStack) {
         // Create a semi-transparent overlay to show reachable tiles
         Pane overlay = new Pane();
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 255, 0.2);"); // Semi-transparent blue overlay
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 255, 0.3);"); // Semi-transparent blue overlay
         overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
         tileStack.getChildren().add(overlay);
     }
@@ -336,6 +330,9 @@ public class GameController {
     private int getMovementCost(Unit unit, int x, int y) {
         // Calculates the movement cost based on the terrain type
         TerrainType terrainType = game.getMap().getTileAt(x, y).getTerrain().getType();
+        if (terrainType == null) {
+            return 0;
+        }
         MovementType movementType = unit.getMovementType();
         return unit.getMovementCostForTerrainType(terrainType, movementType);
     }

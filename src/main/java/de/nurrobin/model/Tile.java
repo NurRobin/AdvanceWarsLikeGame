@@ -70,6 +70,7 @@ public class Tile {
     private final Map<MovementType, Integer> movementCosts;
     private int x;
     private int y;
+    private int index;
     
     /**
      * Constructs a Tile with a specific tile ID. Initializes the tile's terrain, background image,
@@ -191,6 +192,42 @@ public class Tile {
      */
     public int getY() {
         return y;
+    }
+
+    /**
+     * Gets the index of the tile in the game map's tile list.
+     *
+     * @return The index of the tile.
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * Sets the index of the tile in the game map's tile list.
+     *
+     * @param index The index of the tile.
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    /**
+     * Sets the x-coordinate of the tile on the game map.
+     *
+     * @param x The x-coordinate.
+     */
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    /**
+     * Sets the y-coordinate of the tile on the game map.
+     *
+     * @param y The y-coordinate.
+     */
+    public void setY(int y) {
+        this.y = y;
     }
 
 }
