@@ -219,6 +219,7 @@ public class GameController {
                 if (tilepersistor.getTileAtPosition(tileX, tileY) == null) {
                     continue;
                 }
+
                 // Calculate the position in the gameBoard pane
                 Tile tile = tilepersistor.getTileAtPosition(tileX, tileY);
                 int index = tile.getIndex();
@@ -237,7 +238,7 @@ public class GameController {
                 StackPane stackPane = (StackPane) node;
                 List<Node> overlaysToRemove = new ArrayList<>();
                 for (Node child : stackPane.getChildren()) {
-                    if (child instanceof Pane && child.getStyle().contains("rgba(0, 0, 255, 0.3)")) {
+                    if (child instanceof Pane && child.getStyle().contains("rgba(0, 0, 255, 0.3)") || child.getStyle().contains("rgba(255, 0, 0, 0.3)")) {
                         overlaysToRemove.add(child);
                     }
                 }
@@ -256,13 +257,30 @@ public class GameController {
     private void renderMovementLayer(Tile tile, StackPane tileStack) {
         // Create a semi-transparent overlay to show reachable tiles
         Pane overlay = new Pane();
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 255, 0.3);"); // Semi-transparent blue overlay
+        Boolean doesTileHaveFriendlyUnit = doesTileHaveFriendlyUnit(tile.getX(), tile.getY());
+        Boolean hasUnit = doesTileHaveUnit(tile.getX(), tile.getY());
+        Boolean isOwnTile = selectedUnit.getX() == tile.getX() && selectedUnit.getY() == tile.getY();
+        if (hasUnit && !doesTileHaveFriendlyUnit && !isOwnTile) {
+            overlay.setStyle("-fx-background-color: rgba(255, 0, 0, 0.3);");
+        }
+        if (!hasUnit && !doesTileHaveFriendlyUnit && !isOwnTile) {
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 255, 0.3);");
+        }
         overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
         overlay.setOnMouseClicked(event -> moveSelectedUnitToTile(tile));
         tileStack.getChildren().add(overlay);
     }
 
     private void moveSelectedUnitToTile(Tile tile) {
+        // if (selectedOrder != SelectedOrder.MOVE) {
+        //     return;
+        // }
+        if (selectedUnit == null) {
+            return;
+        }
+        if (doesTileHaveUnit(tile.getX(), tile.getY())) {
+            return;
+        }
         Unit unit = selectedUnit;
         int moveToX = tile.getX();
         int moveToY = tile.getY();
@@ -343,7 +361,7 @@ public class GameController {
                 int newX = x + direction[0];
                 int newY = y + direction[1];
 
-                if (isValidTile(newX, newY) && !visited[newX][newY] && !doesTileHaveUnit(newX, newY)) {
+                if (isValidTile(newX, newY) && !visited[newX][newY] && !doesTileHaveFriendlyUnit(newX, newY)) {
                     int cost = getMovementCost(unit, newX, newY);
                     if (remainingMovementPoints - cost >= 0) {
                         queue.add(new int[]{newX, newY, remainingMovementPoints - cost});
@@ -355,13 +373,18 @@ public class GameController {
         return reachableTiles;
     }
 
-    private boolean doesTileHaveUnit(int x, int y) {
+    private boolean doesTileHaveFriendlyUnit(int x, int y) {
         Unit unit = unitPersistor.getUnitAtPosition(x, y);
         if (unit == null) {
             return false;
+        } else {
+            Boolean sameTeam = unitPersistor.isOnSameTeam(selectedUnit, unit);
+            return sameTeam;
         }
-        logger.logDebug("Unit at position: " + unit.getUnitID());
-        return true;
+    }
+
+    private boolean doesTileHaveUnit(int x, int y) {
+        return unitPersistor.getUnitAtPosition(x, y) != null;
     }
 
     /**

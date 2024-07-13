@@ -179,6 +179,10 @@ public class Unit {
         return playerID == 2;
     }
 
+    public String getTeamColor() {
+        return isOrange() ? "orange" : "blue";
+    }
+
     public String getUnitID() {
         return unitID;
     }

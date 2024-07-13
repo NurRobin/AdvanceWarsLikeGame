@@ -61,4 +61,12 @@ public class UnitPersistor {
         }
         return null;
     }
+
+    public Boolean isOnSameTeam(Unit selectedUnit, Unit unit) {
+        if (selectedUnit.getTeamColor().equals(unit.getTeamColor())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
