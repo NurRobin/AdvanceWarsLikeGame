@@ -1,6 +1,7 @@
 package de.nurrobin.controller;
 
 import de.nurrobin.enums.MovementType;
+import de.nurrobin.enums.SelectedOrder;
 import de.nurrobin.enums.TerrainType;
 import de.nurrobin.model.Game;
 import de.nurrobin.model.GameMap;
@@ -36,6 +37,8 @@ public class GameController {
     private int tileCount = 0;
     private int objectCount;
     private int unitCount;
+
+    private SelectedOrder selectedOrder;
 
     private Unit selectedUnit;
 
