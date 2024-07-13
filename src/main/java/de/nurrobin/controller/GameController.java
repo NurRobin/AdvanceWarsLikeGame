@@ -255,7 +255,54 @@ public class GameController {
         Pane overlay = new Pane();
         overlay.setStyle("-fx-background-color: rgba(0, 0, 255, 0.3);"); // Semi-transparent blue overlay
         overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
+        overlay.setOnMouseClicked(event -> moveSelectedUnitToTile(tile));
         tileStack.getChildren().add(overlay);
+    }
+
+    private void moveSelectedUnitToTile(Tile tile) {
+        Unit unit = selectedUnit;
+        int moveToX = tile.getX();
+        int moveToY = tile.getY();
+        int moveToIndex = tile.getIndex();
+        logger.logDebug("Moving unit " + unit.getUnitID() + " to tile " + moveToX + ", " + moveToY);
+        unit.setX(moveToX);
+        unit.setY(moveToY);
+        unit.setIndex(moveToIndex);
+        selectedUnit = null;
+        clearMovementOverlays();
+        updateGameBoard();
+    }
+
+    private void updateGameBoard() {
+        // First clear the existing layers
+        for (Node node : gameBoard.getChildren()) {
+            if (node instanceof StackPane) {
+                StackPane stackPane = (StackPane) node;
+                List<Node> spritesToRemove = new ArrayList<>();
+                for (Node child : stackPane.getChildren()) {
+                    if (child instanceof ImageView) {
+                        spritesToRemove.add(child);
+                    }
+                }
+                stackPane.getChildren().removeAll(spritesToRemove);
+            }
+        }
+        // Then re-render all the layers
+        // Background and object layers
+        for (Tile tile : tilepersistor.getTiles()) {
+            int index = tile.getIndex();
+            StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
+            renderBackgroundLayer(tile, 32, tileStack);
+            renderObjectLayer(tile, 32, tileStack);
+        }
+
+        for (Unit unit : unitPersistor.getUnits()) {
+            if (unit.getUnitCode() != 36) {
+                int index = unit.getIndex();
+                StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
+                renderSpriteLayer(unit, 32, tileStack);
+            }
+        }
     }
 
     /**
