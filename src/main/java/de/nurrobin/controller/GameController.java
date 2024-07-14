@@ -337,6 +337,9 @@ public class GameController {
             return;
         }
         if (doesTileHaveUnit(tile.getX(), tile.getY())) {
+            Unit defender = unitPersistor.getUnitAtPosition(tile.getX(), tile.getY());
+            logger.logDebug(selectedUnit.getUnitID() + " is attacking " + defender.getUnitID());
+            attackUnit(selectedUnit, defender);
             return;
         }
         Unit unit = selectedUnit;
@@ -347,6 +350,24 @@ public class GameController {
         unit.setX(moveToX);
         unit.setY(moveToY);
         unit.setIndex(moveToIndex);
+        selectedUnit = null;
+        clearMovementOverlays();
+        updateGameBoard();
+    }
+
+    private void attackUnit(Unit attacker, Unit defender) {
+        if (attacker == null || defender == null) {
+            return;
+        }
+        if (unitPersistor.isOnSameTeam(attacker, defender)) {
+            logger.logDebug("Cannot attack friendly unit!");
+            return;
+        }
+        attacker.attack(defender);
+        if (defender.getHealth() <= 0) {
+            logger.logDebug("Unit " + defender.getUnitID() + " was defeated!");
+            unitPersistor.removeUnit(defender);
+        }
         selectedUnit = null;
         clearMovementOverlays();
         updateGameBoard();
