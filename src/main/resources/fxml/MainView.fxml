@@ -21,11 +21,7 @@
         <HBox spacing="20" alignment="center">
             <Label fx:id="unitHealthLabel" text="Health: 10/10" />
             <Label fx:id="unitMovementLabel" text="Movement: 5/5" />
+            <Button text="End Turn" onAction="#endTurn" />
         </HBox>
     </bottom>
-    <right>
-        <VBox spacing="20" alignment="center">
-            <Button text="End Turn" onAction="#endTurn" />
-        </VBox>
-    </right>
 </BorderPane>
