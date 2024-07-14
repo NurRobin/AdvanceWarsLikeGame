@@ -84,6 +84,7 @@ public class GameController {
             game = new Game(new GameMap(randomMapName));
             initGameBoard();
             updateRoundLabel();
+            updateMapNameLabel(randomMapName);
         } catch (IOException e) {
             logger.logException(e);
         }
@@ -94,6 +95,11 @@ public class GameController {
      */
     private void updateRoundLabel() {
         roundLabel.setText("Round: " + currentRound);
+    }
+
+    private void updateMapNameLabel(String mapName) {
+        String displayName = mapName.replace(".map", "");
+        mapNameLabel.setText("Map: " + displayName);
     }
 
     /**
