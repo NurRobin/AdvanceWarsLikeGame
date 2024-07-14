@@ -82,7 +82,7 @@ public class GameController {
         logger.logInfo("Loading map: " + randomMapName);
         try {
             game = new Game(new GameMap(randomMapName));
-            renderGameBoard();
+            initGameBoard();
             updateRoundLabel();
         } catch (IOException e) {
             logger.logException(e);
@@ -113,7 +113,7 @@ public class GameController {
         for (Unit unit : unitPersistor.getUnits()) {
             unit.resetMovementPoints();
         }
-        renderGameBoard();
+        updateGameBoard();
     }
 
     /**
@@ -136,7 +136,7 @@ public class GameController {
     /**
      * Renders the game board by creating visual representations of tiles, objects, and units.
      */
-    private void renderGameBoard() {
+    private void initGameBoard() {
         GameMap map = game.getMap();
         int tileSize = 32;
         int width = map.getWidth();
