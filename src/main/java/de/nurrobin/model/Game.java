@@ -1,11 +1,5 @@
 package de.nurrobin.model;
 
-import de.nurrobin.controller.GameController;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-
-
-
 public class Game {
 
     private GameMap map;

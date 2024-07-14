@@ -1,32 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.nurrobin.controller.GameController">
-    <center>
-        <Pane fx:id="gameBoard" />
-    </center>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.nurrobin.controller.GameController" fx:id="mainView">
     <top>
-        <HBox spacing="20" alignment="center">
+        <HBox spacing="20" alignment="CENTER" fx:id="topBox" BorderPane.alignment="CENTER">
             <Label fx:id="roundLabel" text="Round: 1" />
             <Label fx:id="playerLabel" text="Player: 1" />
             <Label fx:id="mapNameLabel" text="Map: Default" />
         </HBox>
     </top>
+    <center>
+        <Pane fx:id="gameBoard" />
+    </center>
     <bottom>
-        <VBox spacing="20" alignment="center">
-            <Label fx:id="unitNameLabel" text="Unit: Soldier" />
-            <Label fx:id="unitHealthLabel" text="HP: 100" />
+        <VBox spacing="20" alignment="CENTER" fx:id="bottomBox" minHeight="200" style="-fx-padding: 20 0 0 0;">
+            <VBox spacing="10" alignment="TOP_LEFT">
+                <Label fx:id="unitNameLabel" text="Unit: Soldier" />
+                <ImageView fx:id="unitImageView" fitHeight="50" fitWidth="50" />
+                <Label fx:id="unitHealthLabel" text="HP: 100" />
+                <Label fx:id="unitMovementLabel" text="Movement: 5" />
+            </VBox>
+            <HBox spacing="20" alignment="CENTER">
+                <Button text="Move Command" onAction="#selectMove" />
+                <Button text="Attack Command" onAction="#selectAttack" />
+                <Button text="Combine Command" onAction="#selectCombine" />
+                <Button text="Clear Command" onAction="#selectClear" />
+            </HBox>
+            <HBox spacing="20" alignment="CENTER_RIGHT">
+                <Label fx:id="actionLabel" text="Action: None" />
+                <Button text="End Turn" onAction="#nextTurn" />
+            </HBox>
         </VBox>
-        <HBox spacing="20" alignment="center">
-            <Button text="End Turn" onAction="#nextTurn" />
-            <Label fx:id="unitHealthLabel" text="Health: 10/10" />
-            <Label fx:id="unitMovementLabel" text="Movement: 5/5" />
-        </HBox>
     </bottom>
 </BorderPane>

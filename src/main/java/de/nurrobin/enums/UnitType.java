@@ -35,4 +35,9 @@ public enum UnitType {
     public int getMovementRadius() {
         return movementRadius;
     }
+
+    public String getName() {
+        String name = name().toLowerCase().replace("_", " ");
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
 }

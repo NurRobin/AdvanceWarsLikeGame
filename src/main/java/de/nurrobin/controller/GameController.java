@@ -11,7 +11,9 @@ import de.nurrobin.model.Unit;
 import de.nurrobin.persistor.TilePersistor;
 import de.nurrobin.persistor.UnitPersistor;
 import de.nurrobin.util.Logger;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -42,9 +44,15 @@ public class GameController {
     private int unitCount;
 
     private SelectedOrder selectedOrder;
-    private boolean secondaryWeaponSelected;
+
+    // Default to secondary weapon until primary weapon is selection is implemented (or even needed)
+    private boolean secondaryWeaponSelected = true;
 
     private Unit selectedUnit;
+
+    @FXML
+    private BorderPane mainView;
+
 
     @FXML
     private Pane gameBoard;
@@ -54,6 +62,9 @@ public class GameController {
 
     @FXML
     private Label mapNameLabel;
+
+    @FXML
+    private Label unitNameLabel;
 
     @FXML
     private Label unitHealthLabel;
@@ -66,6 +77,21 @@ public class GameController {
     
     @FXML
     private Label playerLabel;
+
+    @FXML
+    private Button moveCommandButton;
+
+    @FXML
+    private Button attackCommandButton;
+
+    @FXML
+    private Button combineCommandButton;
+
+    @FXML
+    private Button clearCommandButton;
+
+    @FXML
+    private Label actionLabel;
 
     private int currentRound = 1;
 
@@ -106,8 +132,33 @@ public class GameController {
     private void updateMapNameLabel(String mapName) {
         String displayName = mapName.replace(".map", "");
         mapNameLabel.setText("Map: " + displayName);
+    }
     public void updatePlayerLabel(int player) {
         playerLabel.setText("Player: " + player);
+    }
+
+    @FXML
+    private void selectMove(ActionEvent event) {
+        selectedOrder = SelectedOrder.MOVE;
+        actionLabel.setText("Action: Move");
+    }
+
+    @FXML
+    private void selectAttack(ActionEvent event) {
+        selectedOrder = SelectedOrder.ATTACK;
+        actionLabel.setText("Action: Attack");
+    }
+
+    @FXML
+    private void selectCombine(ActionEvent event) {
+        selectedOrder = SelectedOrder.COMBINE;
+        actionLabel.setText("Action: Combine");
+    }
+
+    @FXML
+    private void selectClear(ActionEvent event) {
+        selectedOrder = null;
+        actionLabel.setText("Action: None selected");
     }
 
     /**
@@ -159,6 +210,9 @@ public class GameController {
         int tileSize = 32;
         int width = map.getWidth();
         int height = map.getHeight();
+        gameBoard.setPrefSize(width * tileSize, height * tileSize);
+        // Set the scene dimensions based on the game board size
+        mainView.setPrefSize(width * tileSize, height * tileSize + 300);
 
         renderLoop(height, width, tileSize, map);
         logger.logInfo("Rendered " + tileCount + " tiles, " + objectCount + " objects and " + unitCount + " units");
@@ -250,7 +304,7 @@ public class GameController {
             tileStack.getChildren().add(unitImage);
             unitCount++;
             // Event-Handler für das Klicken auf Einheiten
-            unitImage.setOnMouseClicked(event -> onUnitClicked(unit));
+            unitImage.setOnMousePressed(event -> onUnitClicked(unit));
         }
     }
 
@@ -272,6 +326,7 @@ public class GameController {
      */
     private void updateUnitInfo() {
         if (selectedUnit != null) {
+            unitNameLabel.setText("Unit: " + selectedUnit.getUnitType().getName());
             unitHealthLabel.setText("Health: " + selectedUnit.getHealth() + "/" + selectedUnit.getMaxHealth());
             unitMovementLabel.setText("Movement: " + selectedUnit.getMovementPoints() + "/" + selectedUnit.getMaxMovementPoints());
         }
@@ -348,29 +403,51 @@ public class GameController {
     }
 
     private void getActionForSelectedTile(Tile tile) {
-        // if (selectedOrder != SelectedOrder.MOVE) {
-        //     return;
-        // }
+        logger.logDebug("Tile clicked: " + tile.getX() + ", " + tile.getY());
+        String orderString = selectedOrder != null ? selectedOrder.toString() : "None";
+        logger.logDebug("Selected order: " + orderString + " for unit " + selectedUnit.getUnitID());
         if (selectedUnit == null) {
             return;
         }
-        if (!doesTileHaveFriendlyUnit(tile.getX(), tile.getY()) && doesTileHaveUnit(tile.getX(), tile.getY())) {
+        if (selectedOrder == null) {
+            Unit clickedUnit = unitPersistor.getUnitAtPosition(tile.getX(), tile.getY());
+            if (clickedUnit == null) {
+                return;
+            } else {
+                selectedUnit = clickedUnit;
+                updateUnitInfo();
+                visualizeMovementOptions();
+            }
+        }
+        if (!doesTileHaveFriendlyUnit(tile.getX(), tile.getY()) && doesTileHaveUnit(tile.getX(), tile.getY()) && selectedOrder.equals(SelectedOrder.ATTACK)) {
             Unit defender = unitPersistor.getUnitAtPosition(tile.getX(), tile.getY());
             logger.logDebug(selectedUnit.getUnitID() + " is attacking " + defender.getUnitID());
             attackUnit(selectedUnit, defender);
-            return;
+            clearMovementOverlays();
         }
-        Unit unit = selectedUnit;
-        int moveToX = tile.getX();
-        int moveToY = tile.getY();
-        int moveToIndex = tile.getIndex();
-        logger.logDebug("Moving unit " + unit.getUnitID() + " to tile " + moveToX + ", " + moveToY);
-        unit.setX(moveToX);
-        unit.setY(moveToY);
-        unit.setIndex(moveToIndex);
-        selectedUnit = null;
-        clearMovementOverlays();
+        if (selectedOrder == SelectedOrder.MOVE) {
+            logger.logDebug("Moving unit " + selectedUnit.getUnitID() + " to tile " + tile.getX() + ", " + tile.getY());
+            Unit unit = selectedUnit;
+            int moveToX = tile.getX();
+            int moveToY = tile.getY();
+            int moveToIndex = tile.getIndex();
+            logger.logDebug("Moving unit " + unit.getUnitID() + " to tile " + moveToX + ", " + moveToY);
+            unit.setX(moveToX);
+            unit.setY(moveToY);
+            unit.setIndex(moveToIndex);
+            clearMovementOverlays();
+        }
+        if (selectedOrder == SelectedOrder.COMBINE) {
+            // TODO: Implement combine action here
+        }
+        selectedOrder = null;
+        updateActionLabel();
         updateGameBoard();
+    }
+
+    @FXML
+    private void updateActionLabel() {
+        actionLabel.setText("Action: None selected");
     }
 
     private void attackUnit(Unit attacker, Unit defender) {
@@ -378,7 +455,6 @@ public class GameController {
             return;
         }
         if (unitPersistor.isOnSameTeam(attacker, defender)) {
-            logger.logDebug("Cannot attack friendly unit!");
             return;
         }
         int dmg = DamageCalculator.calculateDamage(attacker, defender, secondaryWeaponSelected);
@@ -389,9 +465,6 @@ public class GameController {
             logger.logDebug("Unit " + defender.getUnitID() + " was defeated!");
             unitPersistor.removeUnit(defender);
         }
-        selectedUnit = null;
-        clearMovementOverlays();
-        updateGameBoard();
     }
 
     private void updateGameBoard() {
@@ -461,7 +534,7 @@ public class GameController {
                 int newX = x + direction[0];
                 int newY = y + direction[1];
 
-                if (isValidTile(newX, newY) && !visited[newX][newY] && !doesTileHaveFriendlyUnit(newX, newY)) {
+                if (isValidTile(newX, newY) && !visited[newX][newY]) {
                     int cost = getMovementCost(unit, newX, newY);
                     if (remainingMovementPoints - cost >= 0) {
                         queue.add(new int[]{newX, newY, remainingMovementPoints - cost});

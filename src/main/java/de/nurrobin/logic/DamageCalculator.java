@@ -49,6 +49,7 @@ public class DamageCalculator {
             }
             properties.load(input);
             String value = properties.getProperty(key);
+            logger.log("Damage value for " + key + " is " + value);
             if (value != null && !value.equals("-")) {
                 return Integer.parseInt(value);
             }

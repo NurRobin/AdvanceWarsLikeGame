@@ -272,7 +272,7 @@ public class GameMap {
             return null;
         }
         int tileValue = tiles[y][x];
-        logger.logDebug("Creating tile at position (" + x + ", " + y + ") with value: " + tileValue);
+        // logger.logDebug("Creating tile at position (" + x + ", " + y + ") with value: " + tileValue);
         return new Tile(tileValue, x, y, tileindex);
     }
 
