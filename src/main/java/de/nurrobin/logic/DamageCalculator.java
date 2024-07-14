@@ -2,7 +2,6 @@ package de.nurrobin.logic;
 
 import de.nurrobin.enums.TerrainType;
 import de.nurrobin.enums.UnitType;
-import de.nurrobin.model.GameMap;
 import de.nurrobin.model.Unit;
 import de.nurrobin.persistor.TilePersistor;
 import de.nurrobin.util.Logger;
@@ -14,8 +13,6 @@ import static de.nurrobin.util.ResourceURLBuilder.buildURL;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -29,12 +26,22 @@ public class DamageCalculator {
         UnitType attackerType = attacker.getUnitType();
         UnitType defenderType = defender.getUnitType();
         TerrainType defenderTerrain = TilePersistor.getInstance().getTileAtPosition(defender.getX(), defender.getY()).getTerrain().getType();
-        int BaseDamage = getBaseDamage(attackerType, defenderType, isSecondaryWeapon);
-        int AttackingHP = attacker.getHealth();
-        int DefendingHP = defender.getHealth();
-        int TerrainCover = defenderTerrain.getDefenseBonus();
+        int IA = 1;
+        int BD = getBaseDamage(attackerType, defenderType, isSecondaryWeapon);
+        double AN = 1.1;
+        int ID = 1;
+        int DN = 1;
+        int AH = attacker.getHealth();
+        int TC = defenderTerrain.getDefenseBonus();
+        int DH = defender.getHealth();
         
-        int damage = ((BaseDamage * AttackingHP) * ((100 - TerrainCover * DefendingHP) / 100));
+        double calculatedDamage = ( ( ( ( ( ( IA * BD ) * AN ) * ID ) * DN ) * AH) * (( 100 - TC * DH ) / 100) );
+        // Round to the nearest integer
+        int damage = (int) Math.round(calculatedDamage);
+
+        // int damage = ((BaseDamage * AttackingHP) * ((100 - TerrainCover * DefendingHP) / 100));
+        logger.log("Damage calculated: " + damage);
+        logger.log("Calculation: ((" + IA + " * " + BD + " * " + AN + " * " + ID + " * " + DN + " * " + AH + ") * ((100 - " + TC + " * " + DH + ") / 100)) = " + damage);
         return damage;
     }
 

@@ -45,8 +45,8 @@ public class GameController {
 
     private SelectedOrder selectedOrder;
 
-    // Default to secondary weapon until primary weapon is selection is implemented (or even needed)
-    private boolean secondaryWeaponSelected = true;
+    // Default to primary weapon until secondary weapon is implemented (TODO)
+    private boolean secondaryWeaponSelected = false;
 
     private Unit selectedUnit;
 
