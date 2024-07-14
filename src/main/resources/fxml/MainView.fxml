@@ -2,9 +2,30 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.nurrobin.controller.GameController">
     <center>
         <Pane fx:id="gameBoard" />
     </center>
+    <top>
+        <HBox spacing="20" alignment="center">
+            <Label fx:id="roundLabel" text="Round: 1" />
+            <Label fx:id="mapNameLabel" text="Map: Default" />
+        </HBox>
+    </top>
+    <bottom>
+        <HBox spacing="20" alignment="center">
+            <Label fx:id="unitHealthLabel" text="Health: 10/10" />
+            <Label fx:id="unitMovementLabel" text="Movement: 5/5" />
+        </HBox>
+    </bottom>
+    <right>
+        <VBox spacing="20" alignment="center">
+            <Button text="End Turn" onAction="#endTurn" />
+        </VBox>
+    </right>
 </BorderPane>

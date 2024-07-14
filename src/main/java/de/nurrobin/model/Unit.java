@@ -74,6 +74,14 @@ public class Unit {
     private int x;
     private int y;
     private int index;
+
+    private int health;
+    private int maxHealth;
+    private int movementPoints;
+    private int maxMovementPoints;
+    private int attackPower;
+    private int defensePower;
+
     UnitPersistor unitPersistor = UnitPersistor.getInstance();
 
     /**
@@ -107,6 +115,15 @@ public class Unit {
         this.movementType = unitType.getMovementType();
         this.movementRadius = unitType.getMovementRadius();
         this.index = index;
+
+        // Initialisieren Sie Gesundheits- und Bewegungspunkte
+        this.maxHealth = 100; // Beispielwert, anpassen je nach Bedarf
+        this.health = maxHealth;
+        this.maxMovementPoints = unitType.getMovementRadius(); // Beispielwert, anpassen je nach Bedarf
+        this.movementPoints = maxMovementPoints;
+        this.attackPower = 50; // Beispielwert, anpassen je nach Bedarf
+        this.defensePower = 30; // Beispielwert, anpassen je nach Bedarf
+
         unitPersistor.addUnit(this);
     }
 
@@ -222,22 +239,100 @@ public class Unit {
         unitPersistor.updateUnit(this);
     }
 
-    /**
-     * Calculates the movement cost for the unit to move over a specified terrain type.
-     *
-     * @param terrainType The type of terrain the unit wants to move over.
-     * @param movementType The movement type of the unit.
-     * @return The movement cost for the unit to move over the specified terrain type.
-     */
-    public int getMovementCostForTerrainType(TerrainType terrainType, MovementType movementType) {
-        Map<MovementType, Integer> movementCosts = terrainType.getMovementCosts();
-        // logger.logDebug("Movement costs for terrain type " + terrainType + ": " + movementCosts);
-        Integer cost = movementCosts.get(movementType);
-        if (cost != null && cost != -1) {
-            return cost;
-        } else {
-            // Movement not possible for this unit on this terrain
-            return Integer.MAX_VALUE;
+        // Getter und Setter für Gesundheit
+        public int getHealth() {
+            return health;
+        }
+    
+        public void setHealth(int health) {
+            this.health = health;
+        }
+    
+        public int getMaxHealth() {
+            return maxHealth;
+        }
+    
+        public void setMaxHealth(int maxHealth) {
+            this.maxHealth = maxHealth;
+        }
+    
+        // Getter und Setter für Bewegungspunkte
+        public int getMovementPoints() {
+            return movementPoints;
+        }
+    
+        public void setMovementPoints(int movementPoints) {
+            this.movementPoints = movementPoints;
+        }
+    
+        public int getMaxMovementPoints() {
+            return maxMovementPoints;
+        }
+    
+        public void setMaxMovementPoints(int maxMovementPoints) {
+            this.maxMovementPoints = maxMovementPoints;
+        }
+    
+        // Getter und Setter für Angriffskraft
+        public int getAttackPower() {
+            return attackPower;
+        }
+    
+        public void setAttackPower(int attackPower) {
+            this.attackPower = attackPower;
+        }
+    
+        // Getter und Setter für Verteidigungskraft
+        public int getDefensePower() {
+            return defensePower;
+        }
+    
+        public void setDefensePower(int defensePower) {
+            this.defensePower = defensePower;
+        }
+    
+        // Methode zum Zurücksetzen der Bewegungspunkte
+        public void resetMovementPoints() {
+            this.movementPoints = maxMovementPoints;
+        }
+    
+        // Methode zum Vereinen von Einheiten
+        public void join(Unit other) {
+            if (this.canJoinWith(other)) {
+                this.health = Math.min(this.health + other.health, this.maxHealth);
+            }
+        }
+    
+        // Überprüfen, ob die Einheiten vereint werden können
+        public boolean canJoinWith(Unit other) {
+            // Beispielbedingung: Überprüfen, ob die Einheiten vom selben Typ sind
+            // Sie können hier weitere Bedingungen hinzufügen
+            return this.unitType.equals(other.unitType);
+        }
+    
+        // Methode zum Angreifen einer anderen Einheit
+        public void attack(Unit other) {
+            int damage = Math.max(0, this.attackPower - other.defensePower);
+            other.setHealth(Math.max(0, other.getHealth() - damage));
+        }
+    
+        /**
+         * Calculates the movement cost for the unit to move over a specified terrain type.
+         *
+         * @param terrainType The type of terrain the unit wants to move over.
+         * @param movementType The movement type of the unit.
+         * @return The movement cost for the unit to move over the specified terrain type.
+         */
+        public int getMovementCostForTerrainType(TerrainType terrainType, MovementType movementType) {
+            Map<MovementType, Integer> movementCosts = terrainType.getMovementCosts();
+            // logger.logDebug("Movement costs for terrain type " + terrainType + ": " + movementCosts);
+            Integer cost = movementCosts.get(movementType);
+            if (cost != null && cost != -1) {
+                return cost;
+            } else {
+                // Movement not possible for this unit on this terrain
+                return Integer.MAX_VALUE;
+            }
         }
     }
-}
+    

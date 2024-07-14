@@ -12,6 +12,8 @@ import de.nurrobin.persistor.UnitPersistor;
 import de.nurrobin.util.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -45,6 +47,23 @@ public class GameController {
     @FXML
     private Pane gameBoard;
 
+    @FXML
+    private Label roundLabel;
+
+    @FXML
+    private Label mapNameLabel;
+
+    @FXML
+    private Label unitHealthLabel;
+
+    @FXML
+    private Label unitMovementLabel;
+
+    @FXML
+    private Button endTurnButton;
+
+    private int currentRound = 1;
+
     private Game game;
 
     TilePersistor tilepersistor = TilePersistor.getInstance();
@@ -64,9 +83,37 @@ public class GameController {
         try {
             game = new Game(new GameMap(randomMapName));
             renderGameBoard();
+            updateRoundLabel();
         } catch (IOException e) {
             logger.logException(e);
         }
+    }
+
+    /**
+     * Updates the round label to reflect the current round.
+     */
+    private void updateRoundLabel() {
+        roundLabel.setText("Round: " + currentRound);
+    }
+
+    /**
+     * Ends the current turn and starts a new round.
+     */
+    @FXML
+    private void endTurn() {
+        currentRound++;
+        updateRoundLabel();
+        // Weitere Logik für den Rundenwechsel
+        onTurnEnd();
+    }
+
+    private void onTurnEnd() {
+        // Aktualisieren Sie die Spielzustände und Einheiten für die neue Runde
+        // Beispiel: Reset der Bewegungspunkte der Einheiten
+        for (Unit unit : unitPersistor.getUnits()) {
+            unit.resetMovementPoints();
+        }
+        renderGameBoard();
     }
 
     /**
@@ -198,7 +245,18 @@ public class GameController {
     private void onUnitClicked(Unit unit) {
         logger.logDebug("Unit clicked: " + unit.getUnitID());
         selectedUnit = unit;
+        updateUnitInfo();
         visualizeMovementOptions();
+    }
+
+    /**
+     * Updates the unit info labels to reflect the currently selected unit.
+     */
+    private void updateUnitInfo() {
+        if (selectedUnit != null) {
+            unitHealthLabel.setText("Health: " + selectedUnit.getHealth() + "/" + selectedUnit.getMaxHealth());
+            unitMovementLabel.setText("Movement: " + selectedUnit.getMovementPoints() + "/" + selectedUnit.getMaxMovementPoints());
+        }
     }
 
     /**
@@ -238,7 +296,7 @@ public class GameController {
                 StackPane stackPane = (StackPane) node;
                 List<Node> overlaysToRemove = new ArrayList<>();
                 for (Node child : stackPane.getChildren()) {
-                    if (child instanceof Pane && child.getStyle().contains("rgba(0, 0, 255, 0.3)") || child.getStyle().contains("rgba(255, 0, 0, 0.3)")) {
+                    if (child instanceof Pane && (child.getStyle().contains("rgba(0, 0, 255, 0.3)") || child.getStyle().contains("rgba(255, 0, 0, 0.3)"))) {
                         overlaysToRemove.add(child);
                     }
                 }
