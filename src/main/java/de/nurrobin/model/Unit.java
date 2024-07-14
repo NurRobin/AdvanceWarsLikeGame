@@ -7,18 +7,11 @@ import de.nurrobin.util.Logger;
 import de.nurrobin.persistor.UnitPersistor;
 import javafx.scene.image.Image;
 
-import java.util.List;
 import java.util.Map;
 
 import static de.nurrobin.enums.ResourceType.ENTITY;
 import static de.nurrobin.enums.UnderlayingResourceType.TEXTURESFILE;
 import static de.nurrobin.util.ResourceURLBuilder.buildURL;
-
-import java.util.Properties;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Represents a unit in the game, including its type, player ownership, and graphical representation.
@@ -124,12 +117,10 @@ public class Unit {
         this.index = index;
 
         // Initialisieren Sie Gesundheits- und Bewegungspunkte
-        this.maxHealth = 100; // Beispielwert, anpassen je nach Bedarf
+        this.maxHealth = 100;
         this.health = maxHealth;
-        this.maxMovementPoints = unitType.getMovementRadius(); // Beispielwert, anpassen je nach Bedarf
+        this.maxMovementPoints = unitType.getMovementRadius();
         this.movementPoints = maxMovementPoints;
-        this.attackPower = 50; // Beispielwert, anpassen je nach Bedarf
-        this.defensePower = 30; // Beispielwert, anpassen je nach Bedarf
 
         unitPersistor.addUnit(this);
     }
@@ -317,129 +308,7 @@ public class Unit {
             return this.unitType.equals(other.unitType);
         }
     
-        // Methode zum Angreifen einer anderen Einheit
-        public void attack(Unit other) {
-            int dmg = 0;
-            Map<String,String> dmgProps = readDamageProperties();
-            if (dmgProps == null) {
-                logger.logDebug("missing dmg-props info for attack.");
-                return;
-            }
-
-            String unitType1 = this.unitType.toString();
-            String unitType2 = other.getUnitType().toString();
-
-            String formattedUnitType1 = unitType1.substring(0, 1).toUpperCase() + unitType1.substring(1).toLowerCase();
-            String formattedUnitType2 = unitType2.substring(0, 1).toUpperCase() + unitType2.substring(1).toLowerCase();
-
-            String key = formattedUnitType1 + "." + formattedUnitType2 + ".1";
-            String property = dmgProps.get(key);
-
-            logger.logDebug("Damage property for key " + key + ": " + property);
-            if (property != null && !property.equals("-")) {
-                dmg = Integer.parseInt(property);
-            } else {
-                dmg=10;
-                logger.logDebug("No damage value found for key: " + key);
-            }
-            logger.logInfo("Calculated damage: " + dmg);
-            other.setHealth(Math.max(0, other.getHealth() - dmg));
-            logger.logInfo(this.unitID +" attacked "+ other.unitID +" and dealt "+ dmg +" damage.");
-        }
-
-        private Map<String,String> specifieDmgProps(Properties prop) {
-            logger.logDebug("specifying dmg-props");
-            logger.logDebug("unitType: "+ this.unitType.toString());
-            switch (this.unitType){
-                case INFANTRY -> {
-                    logger.logDebug("infantry dmg-props found");
-                    return filterProperties(prop, "Infantry");
-                }
-                case MECH_INFANTRY -> {
-                    logger.logDebug("mech_infantry dmg-props found");
-                    return filterProperties(prop, "Mechanised_Infantry");
-                }
-                case RECON -> {
-                    logger.logDebug("recon dmg-props found");
-                    return filterProperties(prop, "Recon");
-                }
-                case TANK -> {
-                    logger.logDebug("tank dmg-props found");
-                    return filterProperties(prop, "Tank");
-                }
-                case MEDIUM_TANK -> {
-                    logger.logDebug("medium_tank dmg-props found");
-                    return filterProperties(prop, "Medium_Tank");
-                }
-                case ARTILLERY -> {
-                    logger.logDebug("artillery dmg-props found");
-                    return filterProperties(prop, "Artillery");
-                }
-                case ROCKETS -> {
-                    logger.logDebug("rockets dmg-props found");
-                    return filterProperties(prop, "Rockets");
-                }
-                case ANTI_AIR -> {
-                    logger.logDebug("anti_air dmg-props found");
-                    return filterProperties(prop, "Anti-Air");
-                }
-                case MISSILES -> {
-                    logger.logDebug("missiles dmg-props found");
-                    return filterProperties(prop, "Missiles");
-                }
-                case FIGHTER -> {
-                    logger.logDebug("fighter dmg-props found");
-                    return filterProperties(prop, "Fighter");
-                }
-                case BOMBER -> {
-                    logger.logDebug("bomber dmg-props found");
-                    return filterProperties(prop, "Bomber");
-                }
-                case BATTLE_COPTER -> {
-                    logger.logDebug("battle_copter dmg-props found");
-                    return filterProperties(prop, "Battle_Copter");
-                }
-                case BATTLESHIP -> {
-                    logger.logDebug("battleship dmg-props found");
-                    return filterProperties(prop, "Battleship");
-                }
-                case CRUISER -> {
-                    logger.logDebug("cruiser dmg-props found");
-                    return filterProperties(prop, "Cruiser");
-                }
-                case SUBMARINE -> {
-                    logger.logDebug("submarine dmg-props found");
-                    return filterProperties(prop, "Submarine");
-                }
-                default -> {
-                    logger.logError("no dmg-props found for unit type: "+ this.unitType);
-                    return null;
-                }
-            }
-        }
-        private Map<String, String> filterProperties(Properties prop, String prefix) {
-            Set<String> keys = prop.stringPropertyNames().stream()
-                    .filter(key -> key.startsWith(prefix + "."))
-                    .collect(Collectors.toSet());
-            logger.logDebug(prefix + " dmg-props: " + keys);
-            return keys.stream().collect(Collectors.toMap(key -> key, prop::getProperty));
-        }
-        public Map<String,String> readDamageProperties() {
-            Properties prop = new Properties();
-            try (InputStream input = getClass().getClassLoader().getResourceAsStream("entities/data/damage.properties")) {
-                if (input == null) {
-                    logger.logDebug("no dmg-props found in resources");
-                    return null;
-                }
-                //load a properties file from class path
-                prop.load(input);
-                logger.logDebug("dmg props found in res");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            return specifieDmgProps(prop);
-        }
-    
+        
         /**
          * Calculates the movement cost for the unit to move over a specified terrain type.
          *

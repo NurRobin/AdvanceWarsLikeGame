@@ -23,6 +23,7 @@ public class ResourceURLBuilder {
         String filePath = switch (underlayingResourceType) {
             case TEXTURESFILE -> "textures/" + resourceName + ".png";
             case DATAFILE -> "data/" + resourceName + ".json";
+            case PROPERTIESFILE -> "data/" + resourceName + ".properties";
             case MAPFILE -> resourceName + ".map";
             case TILESFILE -> "tiles/" + resourceName + ".tiles";
             case UNITSFILE -> "units/" + resourceName + ".units";

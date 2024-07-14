@@ -9,6 +9,9 @@ public class GameUI {
     private Label roundLabel;
 
     @FXML
+    private Label playerLabel;
+
+    @FXML
     private Label mapNameLabel;
 
     @FXML
@@ -19,6 +22,10 @@ public class GameUI {
 
     public void updateRound(int round) {
         roundLabel.setText("Round: " + round);
+    }
+
+    public void updatePlayer(int player) {
+        playerLabel.setText("Player: " + player);
     }
 
     public void updateMapName(String mapName) {

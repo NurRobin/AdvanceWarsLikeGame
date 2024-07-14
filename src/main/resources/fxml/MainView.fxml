@@ -14,14 +14,19 @@
     <top>
         <HBox spacing="20" alignment="center">
             <Label fx:id="roundLabel" text="Round: 1" />
+            <Label fx:id="playerLabel" text="Player: 1" />
             <Label fx:id="mapNameLabel" text="Map: Default" />
         </HBox>
     </top>
     <bottom>
+        <VBox spacing="20" alignment="center">
+            <Label fx:id="unitNameLabel" text="Unit: Soldier" />
+            <Label fx:id="unitHealthLabel" text="HP: 100" />
+        </VBox>
         <HBox spacing="20" alignment="center">
+            <Button text="End Turn" onAction="#nextTurn" />
             <Label fx:id="unitHealthLabel" text="Health: 10/10" />
             <Label fx:id="unitMovementLabel" text="Movement: 5/5" />
-            <Button text="End Turn" onAction="#endTurn" />
         </HBox>
     </bottom>
 </BorderPane>

@@ -5,5 +5,6 @@ public enum UnderlayingResourceType {
     DATAFILE,
     MAPFILE,
     TILESFILE,
-    UNITSFILE
+    UNITSFILE,
+    PROPERTIESFILE,
 }

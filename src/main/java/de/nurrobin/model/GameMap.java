@@ -43,7 +43,9 @@ public class GameMap {
      */
     public GameMap(String mapFileName) throws IOException, URISyntaxException {
         // Load map data from file in resources/maps/mapFileName.map
-        mapFileName = mapFileName.replace(".map", "");
+        //mapFileName = mapFileName.replace(".map", "");
+        // TODO: Remove this line when done debugging
+        mapFileName = "PistonDam";
         String mapFilePath = buildURL(MAP, MAPFILE, mapFileName);
         loadMap(mapFilePath);
     }

@@ -3,6 +3,7 @@ package de.nurrobin.controller;
 import de.nurrobin.enums.MovementType;
 import de.nurrobin.enums.SelectedOrder;
 import de.nurrobin.enums.TerrainType;
+import de.nurrobin.logic.DamageCalculator;
 import de.nurrobin.model.Game;
 import de.nurrobin.model.GameMap;
 import de.nurrobin.model.Tile;
@@ -41,6 +42,7 @@ public class GameController {
     private int unitCount;
 
     private SelectedOrder selectedOrder;
+    private boolean secondaryWeaponSelected;
 
     private Unit selectedUnit;
 
@@ -60,7 +62,10 @@ public class GameController {
     private Label unitMovementLabel;
 
     @FXML
-    private Button endTurnButton;
+    private Button nextTurnButton;
+    
+    @FXML
+    private Label playerLabel;
 
     private int currentRound = 1;
 
@@ -68,6 +73,7 @@ public class GameController {
 
     TilePersistor tilepersistor = TilePersistor.getInstance();
     UnitPersistor unitPersistor = UnitPersistor.getInstance();
+
 
     /**
      * Initializes the game controller and loads a random map to start the game.
@@ -100,17 +106,23 @@ public class GameController {
     private void updateMapNameLabel(String mapName) {
         String displayName = mapName.replace(".map", "");
         mapNameLabel.setText("Map: " + displayName);
+    public void updatePlayerLabel(int player) {
+        playerLabel.setText("Player: " + player);
     }
 
     /**
      * Ends the current turn and starts a new round.
      */
     @FXML
-    private void endTurn() {
-        currentRound++;
-        updateRoundLabel();
-        // Weitere Logik für den Rundenwechsel
-        onTurnEnd();
+    private void nextTurn() {
+        int roundBeforeAdvance = game.getTurn();
+        game.advancePlayer();
+        currentRound = game.getTurn();
+        updatePlayerLabel(game.getPlayer());
+        if (roundBeforeAdvance != currentRound) {
+            updateRoundLabel();
+            onTurnEnd();
+        }
     }
 
     private void onTurnEnd() {
@@ -331,18 +343,18 @@ public class GameController {
             overlay.setStyle("-fx-background-color: rgba(0, 0, 255, 0.3);");
         }
         overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
-        overlay.setOnMouseClicked(event -> moveSelectedUnitToTile(tile));
+        overlay.setOnMouseClicked(event -> getActionForSelectedTile(tile));
         tileStack.getChildren().add(overlay);
     }
 
-    private void moveSelectedUnitToTile(Tile tile) {
+    private void getActionForSelectedTile(Tile tile) {
         // if (selectedOrder != SelectedOrder.MOVE) {
         //     return;
         // }
         if (selectedUnit == null) {
             return;
         }
-        if (doesTileHaveUnit(tile.getX(), tile.getY())) {
+        if (!doesTileHaveFriendlyUnit(tile.getX(), tile.getY()) && doesTileHaveUnit(tile.getX(), tile.getY())) {
             Unit defender = unitPersistor.getUnitAtPosition(tile.getX(), tile.getY());
             logger.logDebug(selectedUnit.getUnitID() + " is attacking " + defender.getUnitID());
             attackUnit(selectedUnit, defender);
@@ -369,7 +381,10 @@ public class GameController {
             logger.logDebug("Cannot attack friendly unit!");
             return;
         }
-        attacker.attack(defender);
+        int dmg = DamageCalculator.calculateDamage(attacker, defender, secondaryWeaponSelected);
+        defender.setHealth(defender.getHealth() - dmg);
+        logger.logDebug("Unit " + attacker.getUnitID() + " attacked unit " + defender.getUnitID());
+        logger.logDebug("Unit " + defender.getUnitID() + " health: " + defender.getHealth());
         if (defender.getHealth() <= 0) {
             logger.logDebug("Unit " + defender.getUnitID() + " was defeated!");
             unitPersistor.removeUnit(defender);
