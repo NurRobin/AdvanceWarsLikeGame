@@ -22,6 +22,7 @@
     </center>
     <bottom>
         <VBox spacing="20" alignment="CENTER" fx:id="bottomBox" minHeight="200" style="-fx-padding: 20 0 0 0;">
+            <Label fx:id="feedbackLabel" text="" style="-fx-text-fill: red; -fx-font-size: 14px;" />
             <VBox spacing="10" alignment="TOP_LEFT">
                 <Label fx:id="unitNameLabel" text="Unit:" />
                 <ImageView fx:id="unitImageView" fitHeight="50" fitWidth="50" />

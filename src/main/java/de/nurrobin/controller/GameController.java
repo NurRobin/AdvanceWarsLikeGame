@@ -93,6 +93,9 @@ public class GameController {
     @FXML
     private Label actionLabel;
 
+    @FXML
+    private Label feedbackLabel;
+
     private int currentRound = 1;
 
     private Game game;
@@ -432,6 +435,7 @@ public class GameController {
             int moveToY = tile.getY();
             int moveToIndex = tile.getIndex();
             logger.logDebug("Moving unit " + unit.getUnitID() + " to tile " + moveToX + ", " + moveToY);
+            calculateAndDeductMovementPoints(unit, moveToX, moveToY);
             unit.setX(moveToX);
             unit.setY(moveToY);
             unit.setIndex(moveToIndex);
@@ -591,5 +595,20 @@ public class GameController {
         }
         MovementType movementType = unit.getMovementType();
         return unit.getMovementCostForTerrainType(terrainType, movementType);
+    }
+
+    private void calculateAndDeductMovementPoints(Unit unit, int moveToX, int moveToY) {
+        int startX = unit.getX();
+        int startY = unit.getY();
+        int distance = Math.abs(moveToX - startX) + Math.abs(moveToY - startY);
+        int movementCost = getMovementCost(unit, moveToX, moveToY) * distance;
+    
+        if (unit.getMovementPoints() >= movementCost) {
+            unit.setMovementPoints(unit.getMovementPoints() - movementCost);
+            updateUnitInfo();
+            feedbackLabel.setText("");
+        } else {
+            feedbackLabel.setText("Nicht genügend Bewegungspunkte verfügbar!");
+        }
     }
 }
