@@ -518,7 +518,7 @@ public class GameController {
         boolean[][] visited = new boolean[mapWidth][mapHeight];
         List<int[]> reachableTiles = new ArrayList<>();
         Queue<int[]> queue = new LinkedList<>();
-        int movementPoints = unit.getUnitType().getMovementRadius();
+        int movementPoints = unit.getMovementPoints(); // Aktuelle Bewegungspunkte der Einheit
         queue.add(new int[]{startX, startY, movementPoints});
 
         while (!queue.isEmpty()) {
@@ -549,6 +549,7 @@ public class GameController {
 
         return reachableTiles;
     }
+
 
     private boolean doesTileHaveFriendlyUnit(int x, int y) {
         Unit unit = unitPersistor.getUnitAtPosition(x, y);
@@ -588,27 +589,31 @@ public class GameController {
      * @return The movement cost for the unit to move onto the tile.
      */
     private int getMovementCost(Unit unit, int x, int y) {
-        // Calculates the movement cost based on the terrain type
         TerrainType terrainType = tilepersistor.getTileAtPosition(x, y).getTerrain().getType();
         if (terrainType == null) {
-            return 0;
+            return Integer.MAX_VALUE; // Unpassierbares Gelände
         }
         MovementType movementType = unit.getMovementType();
         return unit.getMovementCostForTerrainType(terrainType, movementType);
     }
+
 
     private void calculateAndDeductMovementPoints(Unit unit, int moveToX, int moveToY) {
         int startX = unit.getX();
         int startY = unit.getY();
         int distance = Math.abs(moveToX - startX) + Math.abs(moveToY - startY);
         int movementCost = getMovementCost(unit, moveToX, moveToY) * distance;
-    
+
         if (unit.getMovementPoints() >= movementCost) {
             unit.setMovementPoints(unit.getMovementPoints() - movementCost);
+            unit.setX(moveToX);
+            unit.setY(moveToY);
             updateUnitInfo();
             feedbackLabel.setText("");
         } else {
             feedbackLabel.setText("Nicht genügend Bewegungspunkte verfügbar!");
         }
     }
+
+
 }
