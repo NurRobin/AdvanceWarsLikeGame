@@ -316,11 +316,16 @@ public class GameController {
      * movement options for that unit.
      *
      * @param unit The unit that was clicked.
-     */
+    }*/
     private void onUnitClicked(Unit unit) {
         logger.logDebug("Unit clicked: " + unit.getUnitID());
         selectedUnit = unit;
         updateUnitInfo();
+        feedbackLabel.setText("");
+        if (unit.getMovementPoints() == 0 & selectedOrder == SelectedOrder.MOVE) {
+            feedbackLabel.setText("This Unit does not have any movement points left!");
+            return; 
+        }
         visualizeMovementOptions();
     }
 
@@ -609,11 +614,6 @@ public class GameController {
             unit.setX(moveToX);
             unit.setY(moveToY);
             updateUnitInfo();
-            feedbackLabel.setText("");
-        } else {
-            feedbackLabel.setText("Nicht genügend Bewegungspunkte verfügbar!");
-        }
-    }
-
-
+        } 
+    }   
 }
