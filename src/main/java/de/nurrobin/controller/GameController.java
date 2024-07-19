@@ -98,6 +98,8 @@ public class GameController {
 
     private int currentRound = 1;
 
+    private int playerID = 1;
+
     private Game game;
 
     TilePersistor tilepersistor = TilePersistor.getInstance();
@@ -120,6 +122,7 @@ public class GameController {
             initGameBoard();
             updateRoundLabel();
             updateMapNameLabel(randomMapName);
+            updatePlayerLabel(playerID);
         } catch (IOException e) {
             logger.logException(e);
         }
@@ -136,6 +139,7 @@ public class GameController {
         String displayName = mapName.replace(".map", "");
         mapNameLabel.setText("Map: " + displayName);
     }
+
     public void updatePlayerLabel(int player) {
         playerLabel.setText("Player: " + player);
     }
@@ -169,6 +173,8 @@ public class GameController {
      */
     @FXML
     private void nextTurn() {
+        feedbackLabel.setText("");
+        clearMovementOverlays();
         int roundBeforeAdvance = game.getTurn();
         game.advancePlayer();
         currentRound = game.getTurn();
@@ -319,9 +325,15 @@ public class GameController {
     }*/
     private void onUnitClicked(Unit unit) {
         logger.logDebug("Unit clicked: " + unit.getUnitID());
+        playerID = unit.getPlayerID();
+        feedbackLabel.setText("");
+        if (playerID != game.getPlayer()) {
+            feedbackLabel.setText("This unit does not belong to you!");
+            clearMovementOverlays();
+            return;
+        }
         selectedUnit = unit;
         updateUnitInfo();
-        feedbackLabel.setText("");
         if (unit.getMovementPoints() == 0 & selectedOrder == SelectedOrder.MOVE) {
             feedbackLabel.setText("This Unit does not have any movement points left!");
             return; 

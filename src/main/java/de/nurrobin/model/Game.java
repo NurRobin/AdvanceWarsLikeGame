@@ -3,11 +3,12 @@ package de.nurrobin.model;
 public class Game {
 
     private GameMap map;
-    private int turn;
+    private int turn = 1;
     private int player;
 
     public Game(GameMap map) {
         this.map = map;
+        this.player = 1;
     }
 
     public GameMap getMap() {
