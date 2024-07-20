@@ -459,7 +459,10 @@ public class GameController {
             clearMovementOverlays();
         }
         if (selectedOrder == SelectedOrder.COMBINE) {
-            // TODO: Implement combine action here
+            if (selectedUnit != null) {
+                clearMovementOverlays();
+            }
+            highlightFriendlyAdjacentTiles(tile);
         }
         selectedOrder = null;
         updateActionLabel();
@@ -627,5 +630,45 @@ public class GameController {
             unit.setY(moveToY);
             updateUnitInfo();
         } 
-    }   
+    }
+
+    private List<Tile> getAdjacentTilesWithFriendlyUnits(Tile selectedTile) {
+        List<Tile> tilesWithFriendlyUnits = new ArrayList<>();
+        int tileX = selectedTile.getX();
+        int tileY = selectedTile.getY();
+        logger.logDebug("Checking adjacent tiles for friendly units around tile at (" + tileX + ", " + tileY + ")");
+    
+        for (int[] direction : directions) {
+            int adjacentX = tileX + direction[0];
+            int adjacentY = tileY + direction[1];
+    
+            if (isValidTile(adjacentX, adjacentY) && doesTileHaveFriendlyUnit(adjacentX, adjacentY)) {
+                Tile adjacentTile = tilepersistor.getTileAtPosition(adjacentX, adjacentY);
+                if (adjacentTile != null) {
+                    tilesWithFriendlyUnits.add(adjacentTile);
+                }
+            }
+        }
+        logger.logDebug("Found " + tilesWithFriendlyUnits.size() + " adjacent tiles with friendly units");
+        return tilesWithFriendlyUnits;
+    }
+
+    private void highlightFriendlyAdjacentTiles(Tile selectedTile) {
+        if (selectedTile != null) {
+            List<Tile> friendlyTiles = getAdjacentTilesWithFriendlyUnits(selectedTile);
+    
+            for (Tile tile : friendlyTiles) {
+                int index = tile.getIndex();
+                StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
+                renderGreenOverlay(tile, tileStack);
+            }
+        }
+    }
+
+    private void renderGreenOverlay(Tile tile, StackPane tileStack) {
+        Pane overlay = new Pane();
+        overlay.setStyle("-fx-background-color: rgba(0, 255, 0, 0.3);"); // Green overlay
+        overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
+        tileStack.getChildren().add(overlay);
+    }
 }
