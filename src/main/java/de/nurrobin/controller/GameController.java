@@ -710,8 +710,6 @@ public class GameController {
             combinedHealth = 100; // Assuming the max health is 100
         }
         unit1.setHealth(combinedHealth);
-        logger.logDebug("unit1 ID: "+unit1.getUnitID());
-        logger.logDebug("unit2 ID: "+unit2.getUnitID());
         // Remove the redundant unit from the game
         unitPersistor.removeUnit(unit2);
     }
