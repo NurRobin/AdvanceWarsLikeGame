@@ -22,7 +22,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         logger.logDebug("Loading FXML file...");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"));
-        Scene scene = new Scene(loader.load()); // Set scene dimensions
+        Scene scene = new Scene(loader.load());
         logger.logDebug("Starting application...");
         primaryStage.setScene(scene);
         primaryStage.setTitle("Advance Wars-like Game");

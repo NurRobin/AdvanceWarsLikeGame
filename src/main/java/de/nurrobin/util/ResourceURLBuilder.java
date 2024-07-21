@@ -32,7 +32,6 @@ public class ResourceURLBuilder {
 
         String urlAsString = basePath + filePath;
 
-        // Check if the resource exists
         Optional<URL> resource = Optional.ofNullable(ResourceURLBuilder.class.getResource(urlAsString));
         if (resource.isEmpty()) {
             logger.log(Level.SEVERE, "Resource not found: " + urlAsString);

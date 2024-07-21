@@ -29,10 +29,10 @@ import java.util.*;
 
 public class GameController {
     private List<int[]> directions = Arrays.asList(
-        new int[]{-1, 0}, // Up
-        new int[]{1, 0},  // Down
-        new int[]{0, -1}, // Left
-        new int[]{0, 1}   // Right
+        new int[]{-1, 0},
+        new int[]{1, 0},  
+        new int[]{0, -1},
+        new int[]{0, 1}   
     );
 
     private final Logger logger = new Logger(GameController.class);
@@ -45,7 +45,6 @@ public class GameController {
 
     private SelectedOrder selectedOrder;
 
-    // Default to primary weapon until secondary weapon is implemented (TODO)
     private boolean secondaryWeaponSelected = false;
 
     private Unit selectedUnit;
@@ -186,8 +185,6 @@ public class GameController {
     }
 
     private void onTurnEnd() {
-        // Aktualisieren Sie die Spielzustände und Einheiten für die neue Runde
-        // Beispiel: Reset der Bewegungspunkte der Einheiten
         for (Unit unit : unitPersistor.getUnits()) {
             unit.resetMovementPoints();
         }
@@ -220,7 +217,6 @@ public class GameController {
         int width = map.getWidth();
         int height = map.getHeight();
         gameBoard.setPrefSize(width * tileSize, height * tileSize);
-        // Set the scene dimensions based on the game board size
         mainView.setPrefSize(width * tileSize, height * tileSize + 300);
 
         renderLoop(height, width, tileSize, map);
@@ -248,13 +244,10 @@ public class GameController {
                 Unit unit = map.createUnitAt(x, y, tileindex);
                 tileindex++;
 
-                // Layer 0: Background layer -> only plains or sea tiles
                 renderBackgroundLayer(tile, tileSize, tileStack);
 
-                // Layer 1: Object layer
                 renderObjectLayer(tile, tileSize, tileStack);
 
-                // Layer 3: Interactive layer -> units
                 renderSpriteLayer(unit, tileSize, tileStack);
 
                 tileStack.setLayoutX(x * tileSize);
@@ -312,7 +305,6 @@ public class GameController {
             unitImage.setFitHeight(tileSize);
             tileStack.getChildren().add(unitImage);
             unitCount++;
-            // Event-Handler für das Klicken auf Einheiten
             unitImage.setOnMousePressed(event -> onUnitClicked(unit));
         }
     }
@@ -357,7 +349,6 @@ public class GameController {
      */
     private void visualizeMovementOptions() {
         if (selectedUnit != null) {
-            // Clear existing movement overlays
             clearMovementOverlays();
     
             List<int[]> reachableTiles = calculateReachableTiles(selectedUnit);
@@ -371,7 +362,6 @@ public class GameController {
                     continue;
                 }
 
-                // Calculate the position in the gameBoard pane
                 Tile tile = tilepersistor.getTileAtPosition(tileX, tileY);
                 int index = tile.getIndex();
                 StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
@@ -406,7 +396,6 @@ public class GameController {
      * @param tileStack The stack pane representing the current tile.
      */
     private void renderMovementLayer(Tile tile, StackPane tileStack) {
-        // Create a semi-transparent overlay to show reachable tiles
         Pane overlay = new Pane();
         Boolean doesTileHaveFriendlyUnit = doesTileHaveFriendlyUnit(tile.getX(), tile.getY());
         Boolean hasUnit = doesTileHaveUnit(tile.getX(), tile.getY());
@@ -493,7 +482,6 @@ public class GameController {
     }
 
     private void updateGameBoard() {
-        // First clear the existing layers
         for (Node node : gameBoard.getChildren()) {
             if (node instanceof StackPane) {
                 StackPane stackPane = (StackPane) node;
@@ -506,8 +494,7 @@ public class GameController {
                 stackPane.getChildren().removeAll(spritesToRemove);
             }
         }
-        // Then re-render all the layers
-        // Background and object layers
+        
         for (Tile tile : tilepersistor.getTiles()) {
             int index = tile.getIndex();
             StackPane tileStack = (StackPane) gameBoard.getChildren().get(index);
@@ -539,7 +526,7 @@ public class GameController {
         boolean[][] visited = new boolean[mapWidth][mapHeight];
         List<int[]> reachableTiles = new ArrayList<>();
         Queue<int[]> queue = new LinkedList<>();
-        int movementPoints = unit.getMovementPoints(); // Aktuelle Bewegungspunkte der Einheit
+        int movementPoints = unit.getMovementPoints();
         queue.add(new int[]{startX, startY, movementPoints});
 
         while (!queue.isEmpty()) {
@@ -594,7 +581,6 @@ public class GameController {
      * @return True if the tile is within bounds, false otherwise.
      */
     private boolean isValidTile(int x, int y) {
-        // Checks if the tile is within map bounds
         int mapWidth = game.getMap().getWidth();
         int mapHeight = game.getMap().getHeight();
         return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
@@ -612,7 +598,6 @@ public class GameController {
     private int getMovementCost(Unit unit, int x, int y) {
         TerrainType terrainType = tilepersistor.getTileAtPosition(x, y).getTerrain().getType();
         if (terrainType == null) {
-            return Integer.MAX_VALUE; // Unpassierbares Gelände
         }
         MovementType movementType = unit.getMovementType();
         return unit.getMovementCostForTerrainType(terrainType, movementType);
@@ -668,7 +653,7 @@ public class GameController {
 
     private void renderGreenOverlay(Tile tile, StackPane tileStack) {
         Pane overlay = new Pane();
-        overlay.setStyle("-fx-background-color: rgba(0, 255, 0, 0.3);"); // Green overlay
+        overlay.setStyle("-fx-background-color: rgba(0, 255, 0, 0.3);");
         overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
         tileStack.getChildren().add(overlay);
     }
@@ -686,7 +671,6 @@ public class GameController {
             return;
         }
 
-        // Assuming the first found adjacent friendly unit for simplicity
         Tile adjacentTile = adjacentTilesWithFriendlyUnits.get(0);
         Unit adjacentUnit = unitPersistor.getUnitAtPosition(adjacentTile.getX(), adjacentTile.getY());
 
@@ -707,15 +691,13 @@ public class GameController {
     private void combineUnits(Unit unit1, Unit unit2) {
         int combinedHealth = unit1.getHealth() + unit2.getHealth();
         if (combinedHealth > 100) {
-            combinedHealth = 100; // Assuming the max health is 100
+            combinedHealth = 100;
         }
         unit1.setHealth(combinedHealth);
-        // Remove the redundant unit from the game
         unitPersistor.removeUnit(unit2);
     }
 
     private void updateUnitInfo(Unit unit) {
         unitHealthLabel.setText("Health: " + unit.getHealth());
-        // Update other UI elements as needed
     }
 }

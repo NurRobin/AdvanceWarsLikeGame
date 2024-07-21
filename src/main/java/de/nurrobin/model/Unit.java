@@ -115,8 +115,6 @@ public class Unit {
         this.movementType = unitType.getMovementType();
         this.movementRadius = unitType.getMovementRadius();
         this.index = index;
-
-        // Initialisieren Sie Gesundheits- und Bewegungspunkte
         this.maxHealth = 100;
         this.health = maxHealth;
         this.maxMovementPoints = unitType.getMovementRadius();
@@ -134,7 +132,7 @@ public class Unit {
     private int determinePlayerID(int unitCode) {
         if (unitCode < 18) return 1;
         if (unitCode >= 18 && unitCode <= 35) return 2;
-        return 0; // No player
+        return 0;
     }
 
     /**
@@ -145,7 +143,7 @@ public class Unit {
      * @return The loaded image for the unit.
      */
     private Image loadImage(int unitCode, boolean isBig) {
-        if (unitCode == 36) return null; // No unit image
+        if (unitCode == 36) return null;
         int index = unitCode % 18;
         String color = (unitCode < 18) ? "orange" : "blue";
         String size = isBig ? "_big" : "";
@@ -237,7 +235,6 @@ public class Unit {
         unitPersistor.updateUnit(this);
     }
 
-        // Getter und Setter für Gesundheit
         public int getHealth() {
             return health;
         }
@@ -254,7 +251,6 @@ public class Unit {
             this.maxHealth = maxHealth;
         }
     
-        // Getter und Setter für Bewegungspunkte
         public int getMovementPoints() {
             return movementPoints;
         }
@@ -271,7 +267,6 @@ public class Unit {
             this.maxMovementPoints = maxMovementPoints;
         }
     
-        // Getter und Setter für Angriffskraft
         public int getAttackPower() {
             return attackPower;
         }
@@ -279,8 +274,7 @@ public class Unit {
         public void setAttackPower(int attackPower) {
             this.attackPower = attackPower;
         }
-    
-        // Getter und Setter für Verteidigungskraft
+
         public int getDefensePower() {
             return defensePower;
         }
@@ -289,22 +283,17 @@ public class Unit {
             this.defensePower = defensePower;
         }
     
-        // Methode zum Zurücksetzen der Bewegungspunkte
         public void resetMovementPoints() {
             this.movementPoints = maxMovementPoints;
         }
     
-        // Methode zum Vereinen von Einheiten
         public void join(Unit other) {
             if (this.canJoinWith(other)) {
                 this.health = Math.min(this.health + other.health, this.maxHealth);
             }
         }
     
-        // Überprüfen, ob die Einheiten vereint werden können
         public boolean canJoinWith(Unit other) {
-            // Beispielbedingung: Überprüfen, ob die Einheiten vom selben Typ sind
-            // Sie können hier weitere Bedingungen hinzufügen
             return this.unitType.equals(other.unitType);
         }
     
@@ -318,12 +307,10 @@ public class Unit {
          */
         public int getMovementCostForTerrainType(TerrainType terrainType, MovementType movementType) {
             Map<MovementType, Integer> movementCosts = terrainType.getMovementCosts();
-            // logger.logDebug("Movement costs for terrain type " + terrainType + ": " + movementCosts);
             Integer cost = movementCosts.get(movementType);
             if (cost != null && cost != -1) {
                 return cost;
             } else {
-                // Movement not possible for this unit on this terrain
                 return Integer.MAX_VALUE;
             }
         }

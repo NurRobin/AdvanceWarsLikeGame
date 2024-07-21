@@ -36,10 +36,8 @@ public class DamageCalculator {
         int DH = defender.getHealth();
         
         double calculatedDamage =( ( ( ( ( ( ( IA * BD ) * AN ) * ID ) * DN ) * AH) * (( 100 - TC * DH ) / 100) )/100);
-        // Round to the nearest integer
         int damage = (int) Math.round(calculatedDamage);
 
-        // int damage = ((BaseDamage * AttackingHP) * ((100 - TerrainCover * DefendingHP) / 100));
         logger.log("Damage calculated: " + damage);
         logger.log("Calculation: ((" + IA + " * " + BD + " * " + AN + " * " + ID + " * " + DN + " * " + AH + ") * ((100 - " + TC + " * " + DH + ") / 100)) = " + damage);
         return damage;
@@ -66,7 +64,7 @@ public class DamageCalculator {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return -1; // Return -1 or throw an exception if the damage value is not found or on error
+        return -1;
     }
 
     

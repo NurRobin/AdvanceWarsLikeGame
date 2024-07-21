@@ -6,7 +6,6 @@ import java.util.List;
 import de.nurrobin.model.Unit;
 
 public class UnitPersistor {
-    // Save which units are on the map
     private List<Unit> units = new ArrayList<>();
     private static UnitPersistor instance;
 

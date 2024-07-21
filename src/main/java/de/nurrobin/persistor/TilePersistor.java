@@ -7,7 +7,6 @@ import de.nurrobin.model.Tile;
 import de.nurrobin.util.Logger;
 
 public class TilePersistor {
-    // Save which tiles are on the map
     @SuppressWarnings("unused")
     private static final Logger logger = new Logger(TilePersistor.class);
     private static List<Tile> tiles = new ArrayList<>();

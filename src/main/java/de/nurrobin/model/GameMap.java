@@ -42,7 +42,6 @@ public class GameMap {
      * @throws URISyntaxException If the syntax of the URI is incorrect.
      */
     public GameMap(String mapFileName) throws IOException, URISyntaxException {
-        // Load map data from file in resources/maps/mapFileName.map
         mapFileName = mapFileName.replace(".map", "");
         String mapFilePath = buildURL(MAP, MAPFILE, mapFileName);
         loadMap(mapFilePath);
@@ -270,7 +269,6 @@ public class GameMap {
             return null;
         }
         int tileValue = tiles[y][x];
-        // logger.logDebug("Creating tile at position (" + x + ", " + y + ") with value: " + tileValue);
         return new Tile(tileValue, x, y, tileindex);
     }
 
