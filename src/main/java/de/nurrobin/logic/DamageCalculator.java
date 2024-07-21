@@ -35,7 +35,7 @@ public class DamageCalculator {
         int TC = defenderTerrain.getDefenseBonus();
         int DH = defender.getHealth();
         
-        double calculatedDamage = ( ( ( ( ( ( IA * BD ) * AN ) * ID ) * DN ) * AH) * (( 100 - TC * DH ) / 100) );
+        double calculatedDamage = ( ( ( ( ( ( IA * BD ) * AN ) * ID ) * DN ) * AH) * (( 100 - TC * DH ) / 100) /150 );
         // Round to the nearest integer
         int damage = (int) Math.round(calculatedDamage);
 

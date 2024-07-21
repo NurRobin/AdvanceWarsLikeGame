@@ -463,6 +463,7 @@ public class GameController {
                 clearMovementOverlays();
             }
             highlightFriendlyAdjacentTiles(tile);
+            handleCombineAction(tile);
         }
         selectedOrder = null;
         updateActionLabel();
@@ -637,11 +638,11 @@ public class GameController {
         int tileX = selectedTile.getX();
         int tileY = selectedTile.getY();
         logger.logDebug("Checking adjacent tiles for friendly units around tile at (" + tileX + ", " + tileY + ")");
-    
+
         for (int[] direction : directions) {
             int adjacentX = tileX + direction[0];
             int adjacentY = tileY + direction[1];
-    
+
             if (isValidTile(adjacentX, adjacentY) && doesTileHaveFriendlyUnit(adjacentX, adjacentY)) {
                 Tile adjacentTile = tilepersistor.getTileAtPosition(adjacentX, adjacentY);
                 if (adjacentTile != null) {
@@ -670,5 +671,53 @@ public class GameController {
         overlay.setStyle("-fx-background-color: rgba(0, 255, 0, 0.3);"); // Green overlay
         overlay.setPrefSize(tileStack.getPrefWidth(), tileStack.getPrefHeight());
         tileStack.getChildren().add(overlay);
+    }
+
+    private void handleCombineAction(Tile selectedTile) {
+        if (selectedUnit == null) {
+            feedbackLabel.setText("No unit selected.");
+            return;
+        }
+
+        List<Tile> adjacentTilesWithFriendlyUnits = getAdjacentTilesWithFriendlyUnits(selectedTile);
+
+        if (adjacentTilesWithFriendlyUnits.isEmpty()) {
+            feedbackLabel.setText("No adjacent friendly unit to combine with.");
+            return;
+        }
+
+        // Assuming the first found adjacent friendly unit for simplicity
+        Tile adjacentTile = adjacentTilesWithFriendlyUnits.get(0);
+        Unit adjacentUnit = unitPersistor.getUnitAtPosition(adjacentTile.getX(), adjacentTile.getY());
+
+        if (adjacentUnit == null || !adjacentUnit.getUnitType().equals(selectedUnit.getUnitType())) {
+            feedbackLabel.setText("No compatible unit to combine with.");
+            return;
+        }
+        if(selectedUnit.getUnitID() == adjacentUnit.getUnitID()) {
+            feedbackLabel.setText("Please select the unit you want to be Combined");
+            return;
+        }
+            combineUnits(selectedUnit, adjacentUnit);
+            feedbackLabel.setText("Units combined successfully.");
+            updateUnitInfo(selectedUnit);
+
+    }
+
+    private void combineUnits(Unit unit1, Unit unit2) {
+        int combinedHealth = unit1.getHealth() + unit2.getHealth();
+        if (combinedHealth > 100) {
+            combinedHealth = 100; // Assuming the max health is 100
+        }
+        unit1.setHealth(combinedHealth);
+        logger.logDebug("unit1 ID: "+unit1.getUnitID());
+        logger.logDebug("unit2 ID: "+unit2.getUnitID());
+        // Remove the redundant unit from the game
+        unitPersistor.removeUnit(unit2);
+    }
+
+    private void updateUnitInfo(Unit unit) {
+        unitHealthLabel.setText("Health: " + unit.getHealth());
+        // Update other UI elements as needed
     }
 }
