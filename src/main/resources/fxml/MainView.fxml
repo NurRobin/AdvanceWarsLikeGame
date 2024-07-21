@@ -8,13 +8,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
-
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.nurrobin.controller.GameController" fx:id="mainView">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.nurrobin.controller.GameController" fx:id="mainView" stylesheets="@../css/styles.css">
     <top>
-        <HBox spacing="20" alignment="CENTER" fx:id="topBox" BorderPane.alignment="CENTER">
-            <Label fx:id="roundLabel" text="Round: 1" />
-            <Label fx:id="playerLabel" text="Player: 1" />
-            <Label fx:id="mapNameLabel" text="Map: Default" />
+        <HBox spacing="20" alignment="CENTER" fx:id="topBox" BorderPane.alignment="CENTER" styleClass="topBox">
+            <Label fx:id="roundLabel" text="Round: 1" styleClass="infoLabel" />
+            <Label fx:id="playerLabel" text="Player: 1" styleClass="infoLabel" />
+            <Label fx:id="mapNameLabel" text="Map: Default" styleClass="infoLabel" />
         </HBox>
     </top>
     <center>
@@ -22,22 +21,24 @@
     </center>
     <bottom>
         <VBox spacing="20" alignment="CENTER" fx:id="bottomBox" minHeight="200" style="-fx-padding: 20 0 0 0;">
-            <Label fx:id="feedbackLabel" text="" style="-fx-text-fill: red; -fx-font-size: 14px;" />
-            <VBox spacing="10" alignment="TOP_LEFT">
-                <Label fx:id="unitNameLabel" text="Unit:" />
-                <ImageView fx:id="unitImageView" fitHeight="50" fitWidth="50" />
-                <Label fx:id="unitHealthLabel" text="HP:" />
-                <Label fx:id="unitMovementLabel" text="Movement:" />
-            </VBox>
+            <Label fx:id="feedbackLabel" text="" styleClass="feedbackLabel" />
+        <VBox spacing="10" alignment="TOP_LEFT">
+            <HBox spacing="5">
+                <Label fx:id="unitNameLabel" text="Unit:" styleClass="unitInfoLabel" />
+                <ImageView fx:id="unitImageView" fitHeight="30" fitWidth="30" />
+            </HBox>
+            <Label fx:id="unitHealthLabel" text="HP:" styleClass="unitInfoLabel" />
+            <Label fx:id="unitMovementLabel" text="Movement:" styleClass="unitInfoLabel" />
+        </VBox>
             <HBox spacing="20" alignment="CENTER">
-                <Button text="Move Command" onAction="#selectMove" />
-                <Button text="Attack Command" onAction="#selectAttack" />
-                <Button text="Combine Command" onAction="#selectCombine" />
-                <Button text="Clear Command" onAction="#selectClear" />
+                <Button text="Move Command" onAction="#selectMove" styleClass="commandButton" />
+                <Button text="Attack Command" onAction="#selectAttack" styleClass="commandButton" />
+                <Button text="Combine Command" onAction="#selectCombine" styleClass="commandButton" />
+                <Button text="Clear Command" onAction="#selectClear" styleClass="commandButton" />
             </HBox>
             <HBox spacing="20" alignment="CENTER_RIGHT">
-                <Label fx:id="actionLabel" text="Action: None" />
-                <Button text="End Turn" onAction="#nextTurn" />
+                <Label fx:id="actionLabel" text="Action: None" styleClass="actionLabel" />
+                <Button text="End Turn" onAction="#nextTurn" styleClass="endTurnButton" />
             </HBox>
         </VBox>
     </bottom>
